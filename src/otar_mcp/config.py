@@ -1,7 +1,6 @@
 """Configuration management for OpenTargets MCP server."""
 
 import os
-from typing import Optional
 
 
 class Config:

@@ -48,6 +48,7 @@ def query_open_targets_graphql(
     """
     try:
         response = execute_graphql_query(config.api_endpoint, query_string, variables)
-        return response
     except Exception as e:
         return {"error": f"Failed to execute GraphQL query: {e!s}"}
+    else:
+        return response

@@ -1,7 +1,5 @@
 """Tests for query tool."""
 
-import pytest
-
 from otar_mcp.tools.query import query_open_targets_graphql
 
 

@@ -1,8 +1,6 @@
 """Tests for GraphQL client."""
 
-import pytest
-
-from otar_mcp.client.graphql import execute_graphql_query, fetch_graphql_schema
+from otar_mcp.client.graphql import execute_graphql_query
 
 
 def test_execute_graphql_query_returns_dict(mock_api_endpoint: str, sample_query_string: str) -> None:

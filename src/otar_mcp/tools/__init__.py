@@ -3,4 +3,4 @@
 # Import all tools to make them available when this package is imported
 from otar_mcp.tools import examples, query, schema
 
-__all__ = ["schema", "query", "examples"]
+__all__ = ["examples", "query", "schema"]

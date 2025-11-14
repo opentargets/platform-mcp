@@ -1,5 +1,7 @@
-from gql import Client, gql  # type: ignore
-from gql.transport.requests import RequestsHTTPTransport  # type: ignore
+from typing import Any, Optional
+
+from gql import Client, gql
+from gql.transport.requests import RequestsHTTPTransport
 from graphql import GraphQLSchema
 
 
@@ -23,12 +25,18 @@ def fetch_graphql_schema(endpoint_url: str) -> GraphQLSchema:
     with client as _session:
         # The schema is automatically fetched and stored in the client
         if not client.schema:
-            raise ValueError("Failed to fetch schema from the GraphQL endpoint.")
+            msg = "Failed to fetch schema from the GraphQL endpoint."
+            raise ValueError(msg)
 
         return client.schema
 
 
-def execute_graphql_query(endpoint_url, query_string, variables=None, headers=None) -> dict:
+def execute_graphql_query(
+    endpoint_url: str,
+    query_string: str,
+    variables: Optional[dict[str, Any]] = None,
+    headers: Optional[dict[str, str]] = None,
+) -> dict[str, Any]:
     """Make a generic GraphQL API call.
 
     Args:
@@ -64,6 +72,7 @@ def execute_graphql_query(endpoint_url, query_string, variables=None, headers=No
 
     try:
         result = client.execute(query, variable_values=variables)
-        return {"status": "success", "data": result}
     except Exception as e:
         return {"status": "error", "message": str(e)}
+    else:
+        return {"status": "success", "data": result}

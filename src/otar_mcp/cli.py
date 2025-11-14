@@ -1,8 +1,5 @@
 """Command-line interface for OpenTargets MCP server."""
 
-import sys
-from typing import Optional
-
 import click
 
 from otar_mcp.config import config
@@ -55,7 +52,7 @@ def serve_stdio() -> None:
 @cli.command(name="list-tools")
 def list_tools() -> None:
     """List all available MCP tools."""
-    mcp = setup_server()
+    setup_server()  # Ensure tools are registered
     click.echo("Available tools:")
     click.echo("  - get_open_targets_graphql_schema: Fetch the OpenTargets GraphQL schema")
     click.echo("  - query_open_targets_graphql: Execute a GraphQL query against OpenTargets API")

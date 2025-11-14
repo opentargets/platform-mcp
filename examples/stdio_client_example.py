@@ -6,8 +6,6 @@ with stdio transport, which is the standard for Claude Desktop integration.
 
 import asyncio
 
-from fastmcp import Client
-
 
 async def main() -> None:
     """Demonstrate basic usage of OpenTargets MCP tools via stdio."""

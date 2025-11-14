@@ -1,7 +1,5 @@
 """Tests for schema tool."""
 
-import pytest
-
 from otar_mcp.tools.schema import get_open_targets_graphql_schema
 
 

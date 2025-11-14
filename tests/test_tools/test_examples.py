@@ -1,7 +1,5 @@
 """Tests for examples tool."""
 
-import pytest
-
 from otar_mcp.tools.examples import get_open_targets_query_examples
 
 
