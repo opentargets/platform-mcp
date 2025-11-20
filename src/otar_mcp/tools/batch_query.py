@@ -9,7 +9,7 @@ from otar_mcp.config import config
 from otar_mcp.mcp_instance import mcp
 
 
-@mcp.tool()
+@mcp.tool(name="batch_query_open_targets_graphql")
 def batch_query_open_targets_graphql(
     query_string: Annotated[str, Field(description="GraphQL query string")],
     variables_list: Annotated[list[dict], Field(description="List of variables for each query execution")],
@@ -20,6 +20,11 @@ def batch_query_open_targets_graphql(
 
     Use this tool instead of the regular query tool when you need to run the same query
     repeatedly with different arguments (e.g., querying multiple drugs, targets, or diseases).
+
+    IMPORTANT: Before writing any query, you MUST first call the `get_open_targets_query_examples`
+    tool with relevant categories (e.g., ["target", "disease", "drug"]) to learn the proper
+    query syntax, available fields, required variables, and structure. Use the examples as
+    templates for constructing your queries.
 
     Args:
         query_string: The GraphQL query string to execute for all variable sets

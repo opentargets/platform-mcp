@@ -10,7 +10,7 @@ from otar_mcp.config import config
 from otar_mcp.mcp_instance import mcp
 
 
-@mcp.tool()
+@mcp.tool(name="query_open_targets_graphql")
 def query_open_targets_graphql(
     query_string: Annotated[str, Field(description="GraphQL query string starting with 'query' keyword")],
     variables: Annotated[
@@ -24,8 +24,19 @@ def query_open_targets_graphql(
 ) -> dict:
     """Execute GraphQL queries against the Open Targets API.
 
+    IMPORTANT: Before writing any query, you MUST first call the `get_open_targets_query_examples`
+    tool with relevant categories (e.g., ["target", "disease", "drug"]) to learn the proper
+    query syntax, available fields, required variables, and structure. Use the examples as
+    templates for constructing your queries.
+
+    Args:
+        query_string: GraphQL query starting with 'query' keyword
+        variables: Optional dict or JSON string with query variables
+        jq_filter: Optional jq expression to filter the response server-side
+
     Returns:
-        dict: GraphQL response with data field containing targets, diseases, drugs, variants, studies or error message.
+        dict: GraphQL response with data field containing targets, diseases, drugs, variants,
+              studies or error message.
     """
     try:
         # Parse variables if provided as a JSON string
