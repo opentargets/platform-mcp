@@ -23,6 +23,7 @@ dependencies = [
     "pydantic>=2.12.4",
     "click>=8.0.0",
     "jq>=1.10.0",
+    "rank-bm25>=0.2.2",
 ]
 
 [project.scripts]
@@ -64,6 +65,10 @@ show_error_codes = true
 
 [[tool.mypy.overrides]]
 module = "jq"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "rank_bm25"
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
