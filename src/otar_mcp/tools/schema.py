@@ -4,7 +4,7 @@ from graphql import print_schema
 
 from otar_mcp.client import fetch_graphql_schema
 from otar_mcp.config import config
-from otar_mcp.server import mcp
+from otar_mcp.mcp_instance import mcp
 
 
 @mcp.tool()
