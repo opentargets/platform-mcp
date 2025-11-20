@@ -24,10 +24,11 @@ def query_open_targets_graphql(
 ) -> dict:
     """Execute GraphQL queries against the Open Targets API.
 
-    IMPORTANT: Before writing any query, you MUST first call the `get_open_targets_query_examples`
-    tool with relevant categories (e.g., ["target", "disease", "drug"]) to learn the proper
-    query syntax, available fields, required variables, and structure. Use the examples as
-    templates for constructing your queries.
+    IMPORTANT: Before writing any query, you MUST first call the `search_query_examples`
+    tool to find relevant query templates. Provide 3-5 diverse search queries that describe
+    what you want to query from different angles (e.g., for target info: ["target basic
+    information identifiers", "gene annotation ensembl", "protein cross-references uniprot"]).
+    The tool will return the most relevant query examples to use as templates.
 
     ALWAYS use a jq filter to return ONLY the specific information requested by the user.
     This achieves parsimony by reducing token consumption and response size. Never return
