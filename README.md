@@ -21,8 +21,6 @@ This package provides an MCP server that enables AI assistants like Claude to in
 - [Contributing](#contributing)
 - [License](#license)
 
-- **Github repository**: <https://github.com/opentargets/otar-mcp/>
-
 ## Features
 
 - 🔍 **GraphQL Schema Access**: Fetch and explore the complete OpenTargets GraphQL schema
