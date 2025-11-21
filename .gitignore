@@ -210,6 +210,7 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 
-extracted_queries/
 
 .DS_Store
+
+__pycache__/
