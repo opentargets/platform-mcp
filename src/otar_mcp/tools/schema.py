@@ -7,7 +7,7 @@ from otar_mcp.config import config
 from otar_mcp.mcp_instance import mcp
 
 
-@mcp.tool()
+@mcp.tool(name="get_open_targets_graphql_schema")
 def get_open_targets_graphql_schema() -> dict:
     """Retrieve the Open Targets GraphQL schema for query construction.
 
