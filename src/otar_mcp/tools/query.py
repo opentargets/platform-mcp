@@ -24,11 +24,36 @@ def query_open_targets_graphql(
 ) -> dict:
     """Execute GraphQL queries against the Open Targets API.
 
-    IMPORTANT: Before writing any query, you MUST first call the `search_query_examples`
-    tool to find relevant query templates. Provide 3-5 diverse search queries that describe
-    what you want to query from different angles (e.g., for target info: ["target basic
-    information identifiers", "gene annotation ensembl", "protein cross-references uniprot"]).
-    The tool will return the most relevant query examples to use as templates.
+    IMPORTANT: Before writing any query, you MUST first call the `get_open_targets_query_examples`
+    tool with relevant categories (e.g., ["target", "disease", "drug"]) to learn the proper
+    query syntax, available fields, required variables, and structure. Use the examples as
+    templates for constructing your queries.
+
+    CRITICAL IDENTIFIER REQUIREMENTS:
+    Open Targets queries require specific standardized identifiers, NOT common names:
+
+    - Targets/Genes: ENSEMBL IDs (e.g., "ENSG00000139618" not "BRCA2")
+    - Diseases: EFO IDs (e.g., "EFO_0000305") or MONDO IDs (e.g., "MONDO_0007254")
+                NOT disease names like "breast cancer"
+    - Drugs: ChEMBL IDs (e.g., "CHEMBL1201583" not "aspirin" or "Bayer Aspirin")
+    - Variants: Variant IDs in "chr_pos_ref_alt" format (e.g., "19_44908822_C_T")
+                or rsIDs (e.g., "rs7412")
+    - Studies: Study IDs (e.g., "GCST90002357")
+    - Credible Sets: Study Locus IDs (e.g., "7d68cc9c70351c9dbd2a2c0c145e555d")
+
+    WHEN USER PROVIDES COMMON NAMES:
+    If the user asks about entities using common language (gene symbols like "BRCA2",
+    disease names like "breast cancer", drug trade names like "aspirin"), you MUST
+    first use the `search_entity` tool to find the proper identifiers before
+    constructing your GraphQL query.
+
+    Example workflow:
+    1. User asks: "What are the associations for BRCA2 and breast cancer?"
+    2. Call: search_entity(query_string="BRCA2", entity_names=["target"])
+       → Get ENSEMBL ID: "ENSG00000139618"
+    3. Call: search_entity(query_string="breast cancer", entity_names=["disease"])
+       → Get EFO/MONDO ID: "MONDO_0007254"
+    4. Use these IDs in your GraphQL query variables
 
     ALWAYS use a jq filter to return ONLY the specific information requested by the user.
     This achieves parsimony by reducing token consumption and response size. Never return
