@@ -7,8 +7,6 @@ from typing import Annotated, Any
 from pydantic import Field
 from rank_bm25 import BM25Okapi
 
-from otar_mcp.mcp_instance import mcp
-
 
 def _get_queries_catalog_path() -> Path:
     """Get the absolute path to the queries_catalog.csv file."""
@@ -196,49 +194,25 @@ def _get_or_initialize_index() -> tuple[Any, list[dict[str, str]]]:
     return _bm25_index, _queries_catalog
 
 
-@mcp.tool(name="search_query_examples")
+# @mcp.tool(name="search_query_examples")
 def search_query_examples(
     search_queries: Annotated[
         list[str],
         Field(
-            description=(
-                "3-5 diverse search queries that describe THE SAME information need from different angles. "
-                "MUST provide at least 3 queries to ensure good coverage. "
-                "Use different phrasings, synonyms, related concepts, and technical terms. "
-                "This replaces semantic search - your intelligence does the 'semantic expansion'. "
-                "\n\nExample for 'get target tractability':\n"
-                "- 'target tractability assessment'\n"
-                "- 'druggability data gene'\n"
-                "- 'small molecule antibody feasibility'\n"
-                "- 'target development level clinical precedence'\n"
-                "- 'compound screening binding data'\n"
-                "\nAll 5 queries ask for the SAME thing but use different words/angles."
-            ),
+            description="3-5 diverse search queries describing the same information need from different angles",
             min_length=3,
             max_length=5,
         ),
     ],
     top_k: Annotated[
         int,
-        Field(description="Number of query examples to return (default: 5)", ge=1, le=20),
+        Field(description="Number of query examples to return", ge=1, le=20),
     ] = 5,
 ) -> str:
-    """Search for relevant GraphQL query examples using multiple search angles.
+    """Search for relevant GraphQL query examples using BM25 lexical search.
 
-    This tool uses BM25 (lexical search) with multiple query variations to find relevant
-    examples. Instead of semantic embeddings, YOU provide the semantic understanding by
-    reformulating the information need into 3-5 diverse search queries.
-
-    **How to use:**
-    1. Think about what information the user needs
-    2. Generate 3-5 different ways to phrase/describe that SAME need
-    3. Use synonyms, related concepts, technical terms, and different angles
-    4. The tool will search with all variations and return top matches
-
-    **Scoring:**
-    - Queries matched by multiple search variations rank higher
-    - BM25 scores are summed across variations
-    - Results include which variations matched each query
+    Provide 3-5 diverse phrasings of the same information need. Results matched by
+    multiple queries rank higher.
 
     Args:
         search_queries: 3-5 diverse phrasings of the same information need (minimum 3 required)
@@ -246,15 +220,6 @@ def search_query_examples(
 
     Returns:
         Markdown-formatted results with query content, descriptions, and relevance scores
-
-    Example:
-        User asks: "How can I get target information?"
-        You call: search_query_examples([
-            "target basic information identifiers",
-            "gene annotation details ensembl",
-            "protein data cross-references uniprot",
-            "target profile metadata approved symbol"
-        ], top_k=5)
     """
     if len(search_queries) < 3:
         return "Error: Please provide at least 3 search queries to ensure good coverage."
