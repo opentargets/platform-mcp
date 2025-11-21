@@ -26,6 +26,10 @@ def batch_query_open_targets_graphql(
     query syntax, available fields, required variables, and structure. Use the examples as
     templates for constructing your queries.
 
+    If the examples don't provide sufficient information about available fields, types, or
+    query structure, use the `get_open_targets_graphql_schema` tool to retrieve the full
+    GraphQL schema for more detailed type definitions and field information.
+
     CRITICAL IDENTIFIER REQUIREMENTS:
     Open Targets queries require specific standardized identifiers, NOT common names:
 
