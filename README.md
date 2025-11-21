@@ -1,14 +1,25 @@
 # OpenTargets MCP
 
-[![Release](https://img.shields.io/github/v/release/opentargets/otar-mcp)](https://img.shields.io/github/v/release/opentargets/otar-mcp)
+[![Release](https://img.shields.io/github/v/release/opentargets/otar-mcp)](https://github.com/opentargets/otar-mcp/releases)
 [![Build status](https://img.shields.io/github/actions/workflow/status/opentargets/otar-mcp/main.yml?branch=main)](https://github.com/opentargets/otar-mcp/actions/workflows/main.yml?query=branch%3Amain)
 [![codecov](https://codecov.io/gh/opentargets/otar-mcp/branch/main/graph/badge.svg)](https://codecov.io/gh/opentargets/otar-mcp)
-[![Commit activity](https://img.shields.io/github/commit-activity/m/opentargets/otar-mcp)](https://img.shields.io/github/commit-activity/m/opentargets/otar-mcp)
-[![License](https://img.shields.io/github/license/opentargets/otar-mcp)](https://img.shields.io/github/license/opentargets/otar-mcp)
+[![Commit activity](https://img.shields.io/github/commit-activity/m/opentargets/otar-mcp)](https://github.com/opentargets/otar-mcp/commits)
+[![License](https://img.shields.io/github/license/opentargets/otar-mcp)](https://github.com/opentargets/otar-mcp/blob/main/LICENSE)
 
 **Model Context Protocol (MCP) server for the [OpenTargets Platform API](https://platform.opentargets.org/)**
 
 This package provides an MCP server that enables AI assistants like Claude to interact with the OpenTargets Platform, a comprehensive resource for target-disease associations and drug discovery data.
+
+## Quick Navigation
+
+- [Features](#features)
+- [Available Tools](#available-tools)
+- [Strategy](#strategy)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Development](#development)
+- [Contributing](#contributing)
+- [License](#license)
 
 - **Github repository**: <https://github.com/opentargets/otar-mcp/>
 
@@ -22,6 +33,16 @@ This package provides an MCP server that enables AI assistants like Claude to in
 - 🚀 **Multiple Transports**: Support for both stdio (Claude Desktop) and HTTP transports
 - 🛠️ **CLI Tools**: Easy-to-use command-line interface for server management
 - 🎯 **JQ Filtering**: Server-side JSON filtering to reduce token consumption and improve performance
+
+## Available Tools
+
+The MCP server provides the following tools:
+
+1. **get_open_targets_graphql_schema**: Fetch the complete GraphQL schema for the OpenTargets Platform API
+2. **query_open_targets_graphql**: Execute GraphQL queries to retrieve data about targets, diseases, drugs, and their associations
+3. **batch_query_open_targets_graphql**: Execute the same GraphQL query multiple times with different variable sets for efficient batch processing
+4. **search_entity**: Search for entities across multiple types (targets, diseases, drugs, variants, studies) and convert common names to standardized IDs
+5. **get_open_targets_query_examples**: Get pre-built example queries organized by category to help the agent in formulating required GraphQL queries
 
 ## Strategy
 
@@ -56,18 +77,6 @@ The jq filter is applied server-side before returning the response, ensuring onl
 The LLM executes the query with appropriate tool selection:
 - `query_open_targets_graphql` for single queries
 - `batch_query_open_targets_graphql` for multiple identical queries with different parameters (reduces latency and tokens)
-
-
-
-## Available Tools
-
-The MCP server provides the following tools:
-
-1. **get_open_targets_graphql_schema**: Fetch the complete GraphQL schema for the OpenTargets Platform API
-2. **query_open_targets_graphql**: Execute GraphQL queries to retrieve data about targets, diseases, drugs, and their associations
-3. **batch_query_open_targets_graphql**: Execute the same GraphQL query multiple times with different variable sets for efficient batch processing
-4. **search_entity**: Search for entities across multiple types (targets, diseases, drugs, variants, studies) and convert common names to standardized IDs
-5. **get_open_targets_query_examples**: Get pre-built example queries organized by category to help the agent in formulating required GraphQL queries
 
 ## Installation
 
@@ -238,10 +247,10 @@ Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for det
 
 This project is licensed under the terms of the license specified in [LICENSE](LICENSE).
 
----
-
-Repository initiated with [fpgmaas/cookiecutter-uv](https://github.com/fpgmaas/cookiecutter-uv).
-
 ## Acknowledgements
 
 We would like to thank the developers from [@biocontext-ai](https://github.com/biocontext-ai) whose implementation of a GraphQL-based MCP server served as an inspiration for this project.
+
+---
+
+Repository initiated with [fpgmaas/cookiecutter-uv](https://github.com/fpgmaas/cookiecutter-uv).
