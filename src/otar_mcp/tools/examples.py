@@ -4,8 +4,6 @@ import json
 from pathlib import Path
 from typing import Any
 
-from otar_mcp.mcp_instance import mcp
-
 
 def _get_extracted_queries_path() -> Path:
     """Get the absolute path to the extracted_queries directory."""
@@ -303,4 +301,4 @@ def get_open_targets_query_examples(categories: list[str]) -> str:
 get_open_targets_query_examples.__doc__ = _DYNAMIC_DOCSTRING
 
 # Now apply the decorator
-get_open_targets_query_examples = mcp.tool(name="get_open_targets_query_examples")(get_open_targets_query_examples)  # type: ignore[assignment]
+# get_open_targets_query_examples = mcp.tool(name="get_open_targets_query_examples")(get_open_targets_query_examples)  # type: ignore[assignment]
