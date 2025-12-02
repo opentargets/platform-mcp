@@ -20,7 +20,7 @@ jobs:
       REPO: ${{ github.event.repository.name }}
       GCP_PROJECT_ID: open-targets-eu-dev
       GCP_REGION: europe-west1
-      GCP_AR_REPO: opentargets
+      GCP_AR_REPO: platform-mcp
       TAG: "${{ github.ref_name}}"
 
     steps:
