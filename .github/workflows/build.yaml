@@ -20,6 +20,7 @@ jobs:
       REPO: ${{ github.event.repository.name }}
       GCP_PROJECT_ID: open-targets-eu-dev
       GCP_REGION: europe-west1
+      GCP_AR_REPO: opentargets
       TAG: "${{ github.ref_name}}"
 
     steps:
@@ -50,8 +51,8 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.REPO }}:latest
-            ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.REPO }}:${{ env.TAG }}
+            ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.GCP_AR_REPO }}/${{ env.REPO }}:latest
+            ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.GCP_AR_REPO }}/${{ env.REPO }}:${{ env.TAG }}
           # cache-from: type=gha
           # cache-to: type=gha,mode=max
 
@@ -59,6 +60,6 @@ jobs:
         name: Generate artifact attestation
         uses: actions/attest-build-provenance@v3
         with:
-          subject-name: ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/platform-mcp/${{ env.REPO }}
+          subject-name: ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.GCP_AR_REPO }}/${{ env.REPO }}
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: true
