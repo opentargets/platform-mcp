@@ -17,7 +17,7 @@ def setup_server() -> FastMCP:
     """
     # Import tool modules that don't need conditional registration
     # These imports trigger the @mcp.tool() decorators
-    from otar_mcp.tools import schema, search  # noqa: F401
+    from otar_mcp.tools import schema, search_entity  # noqa: F401
 
     # Conditionally register query tools based on jq_enabled config
     from otar_mcp.tools.register import register_query_tools

@@ -41,7 +41,7 @@ The MCP server provides the following tools:
 1. **get_open_targets_graphql_schema**: Fetch the complete GraphQL schema for the OpenTargets Platform API, including detailed documentation for all types and fields
 2. **query_open_targets_graphql**: Execute GraphQL queries to retrieve data about targets, diseases, drugs, and their associations
 3. **batch_query_open_targets_graphql**: Execute the same GraphQL query multiple times with different variable sets for efficient batch processing
-4. **search_open_targets**: Search for entities across multiple types (targets, diseases, drugs, variants, studies) and retrieve their standardized IDs
+4. **search_entity**: Search for entities across multiple types (targets, diseases, drugs, variants, studies) and retrieve their standardized IDs
 
 ## Strategy
 
@@ -58,7 +58,7 @@ The LLM calls `get_open_targets_graphql_schema` to understand the GraphQL API st
 
 ### Step 2: Resolve Identifiers (if needed)
 
-When a user query contains common names (gene symbols, disease names, drug names), the LLM uses `search_open_targets` to convert them to standardized IDs required by the API.
+When a user query contains common names (gene symbols, disease names, drug names), the LLM uses `search_entity` to convert them to standardized IDs required by the API.
 
 ### Step 3: Execute Query
 
