@@ -19,6 +19,7 @@ This package provides an MCP server that enables AI assistants like Claude to in
 - [Strategy](#strategy)
 - [Installation](#installation)
 - [Usage](#usage)
+- [JQ Filtering](#jq-filtering-optional)
 - [Development](#development)
 - [Contributing](#contributing)
 - [License](#license)
@@ -31,7 +32,7 @@ This package provides an MCP server that enables AI assistants like Claude to in
 - 🔎 **Entity Search**: Search for entities across multiple types (targets, diseases, drugs, variants, studies)
 - 🚀 **Multiple Transports**: Support for both stdio (Claude Desktop) and HTTP transports
 - 🛠️ **CLI Tools**: Easy-to-use command-line interface for server management
-- 🎯 **JQ Filtering**: Server-side JSON filtering to reduce token consumption and improve performance
+- 🎯 **JQ Filtering** (Optional): Server-side JSON filtering to reduce token consumption and improve performance
 
 ## Available Tools
 
@@ -64,13 +65,11 @@ When a user query contains common names (gene symbols, disease names, drug names
 The LLM constructs and executes GraphQL queries using:
 - Standardized IDs from Step 2
 - Query structure from the schema
-- **jq filters** to extract only requested fields, minimizing token consumption
+- **jq filters** (optional, when enabled) to extract only requested fields, minimizing token consumption
 
 Tool selection:
 - `query_open_targets_graphql` for single queries
 - `batch_query_open_targets_graphql` for multiple identical queries with different parameters (reduces latency and tokens)
-
-The jq filter is applied server-side before returning the response, ensuring only relevant data is transmitted.
 
 ## Installation
 
@@ -106,11 +105,31 @@ Add this configuration to your Claude Desktop config file:
         "run",
         "--directory",
         "<your-path>/otar-mcp",
-        "fastmcp",
-        "run",
-        "src/otar_mcp/server.py"
+        "otar-mcp",
+        "serve-stdio"
       ],
-      "transport": "stdio",
+      "transport": "stdio"
+    }
+  }
+}
+```
+
+To enable jq filtering support (see [JQ Filtering](#jq-filtering-optional) section):
+
+```json
+{
+  "mcpServers": {
+    "otar-mcp": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "<your-path>/otar-mcp",
+        "otar-mcp",
+        "serve-stdio",
+        "--jq"
+      ],
+      "transport": "stdio"
     }
   }
 }
@@ -126,6 +145,9 @@ uv run otar-mcp serve-http
 
 # Using installed package
 otar-mcp serve-http --host 127.0.0.1 --port 8000
+
+# With jq filtering enabled
+otar-mcp serve-http --jq
 ```
 
 #### Start stdio server
@@ -136,12 +158,19 @@ uv run otar-mcp serve-stdio
 
 # Using installed package
 otar-mcp serve-stdio
+
+# With jq filtering enabled
+otar-mcp serve-stdio --jq
 ```
 
 #### List available tools
 
 ```bash
+# List tools without jq support (default)
 uv run otar-mcp list-tools
+
+# List tools with jq support
+uv run otar-mcp list-tools --jq
 ```
 
 #### Run as a Python module
@@ -159,6 +188,48 @@ Configure the server using environment variables:
 - `MCP_HTTP_HOST`: HTTP server host (default: "127.0.0.1")
 - `MCP_HTTP_PORT`: HTTP server port (default: "8000")
 - `OPENTARGETS_TIMEOUT`: Request timeout in seconds (default: "30")
+- `OPENTARGETS_JQ_ENABLED`: Enable jq filtering support (default: "false")
+
+### JQ Filtering (Optional)
+
+The MCP server supports optional server-side JSON filtering using jq expressions. This feature is **disabled by default** to simplify the tool interface for most users.
+
+#### When to Enable JQ Filtering
+
+Enable jq filtering when:
+- You want to reduce token consumption by extracting only specific fields from API responses
+- Working with large API responses where only a subset of data is needed
+- The calling LLM is proficient at tool calling and can reliably construct jq filters
+
+Keep jq disabled (default) when:
+- Simplicity is preferred over optimization
+- Working with straightforward queries that don't benefit from filtering
+- The LLM should receive complete API responses
+
+#### Enabling JQ Filtering
+
+**Via CLI flag:**
+```bash
+otar-mcp serve-stdio --jq
+otar-mcp serve-http --jq
+```
+
+**Via environment variable:**
+```bash
+export OPENTARGETS_JQ_ENABLED=true
+otar-mcp serve-stdio
+```
+
+#### How JQ Filtering Works
+
+When jq filtering is enabled, the query tools expose a `jq_filter` parameter. The jq filter is applied server-side before the response is returned, extracting only the relevant data and discarding unnecessary fields.
+
+Example: To extract only the gene symbol and ID from a target query:
+```
+jq_filter: ".data.target | {id, symbol: .approvedSymbol}"
+```
+
+This significantly reduces token consumption by returning only the requested fields instead of the full API response.
 
 ## Development
 
@@ -201,7 +272,8 @@ otar-mcp/
 │   │   ├── schema.py        # Schema fetching tool
 │   │   ├── query.py         # Query execution tool
 │   │   ├── batch_query.py   # Batch query tool
-│   │   └── search.py        # Search tool
+│   │   ├── search.py        # Search tool
+│   │   └── register.py      # Conditional tool registration
 │   └── utils/               # Utility functions
 │       └── __init__.py
 ├── tests/                   # Test suite
