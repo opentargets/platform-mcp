@@ -4,9 +4,9 @@ from typing import Annotated
 
 from pydantic import Field
 
-from otar_mcp.client import execute_graphql_query
-from otar_mcp.config import config
-from otar_mcp.mcp_instance import mcp
+from platform_mcp.client import execute_graphql_query
+from platform_mcp.config import config
+from platform_mcp.mcp_instance import mcp
 
 # GraphQL query for entity search - baked in directly
 SEARCH_ENTITY_QUERY = """

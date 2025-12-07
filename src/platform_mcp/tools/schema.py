@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from otar_mcp.mcp_instance import mcp
+from platform_mcp.mcp_instance import mcp
 
 
 @mcp.tool()

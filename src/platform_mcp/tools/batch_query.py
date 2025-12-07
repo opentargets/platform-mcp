@@ -4,8 +4,8 @@ from typing import Annotated, Optional
 
 from pydantic import Field
 
-from otar_mcp.client.graphql import execute_graphql_query
-from otar_mcp.config import config
+from platform_mcp.client.graphql import execute_graphql_query
+from platform_mcp.config import config
 
 # ============================================================================
 # Docstring Variants

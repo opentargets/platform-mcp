@@ -5,8 +5,8 @@ from typing import Annotated, Optional, Union
 
 from pydantic import Field
 
-from otar_mcp.client import execute_graphql_query
-from otar_mcp.config import config
+from platform_mcp.client import execute_graphql_query
+from platform_mcp.config import config
 
 # ============================================================================
 # Docstring Variants

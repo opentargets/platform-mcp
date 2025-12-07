@@ -4,7 +4,7 @@ import asyncio
 
 import click
 
-from otar_mcp.config import config
+from platform_mcp.config import config
 
 
 @click.group()
@@ -43,7 +43,7 @@ def serve_http(host: str, port: int, jq: bool) -> None:
     config.jq_enabled = jq
 
     # Now import and setup server (triggers tool registration)
-    from otar_mcp.server import setup_server
+    from platform_mcp.server import setup_server
 
     mcp = setup_server()
 
@@ -69,7 +69,7 @@ def serve_stdio(jq: bool) -> None:
     config.jq_enabled = jq
 
     # Now import and setup server (triggers tool registration)
-    from otar_mcp.server import setup_server
+    from platform_mcp.server import setup_server
 
     mcp = setup_server()
 
@@ -90,7 +90,7 @@ def list_tools(jq: bool) -> None:
     # Set jq configuration to show appropriate tool signatures
     config.jq_enabled = jq
 
-    from otar_mcp.server import setup_server
+    from platform_mcp.server import setup_server
 
     mcp = setup_server()
 
