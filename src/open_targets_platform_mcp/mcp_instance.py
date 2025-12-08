@@ -3,7 +3,7 @@
 from fastmcp import FastMCP
 from mcp.types import Icon
 
-from platform_mcp.config import config
+from open_targets_platform_mcp.config import config
 
 # Create the MCP server instance
 mcp = FastMCP(

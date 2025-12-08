@@ -6,7 +6,7 @@ from typing import Annotated
 
 import typer
 
-from platform_mcp.config import config
+from open_targets_platform_mcp.config import config
 
 app = typer.Typer()
 
@@ -63,7 +63,7 @@ def serve_http(
     config.jq_enabled = jq
 
     # Now import and setup server (triggers tool registration)
-    from platform_mcp.server import setup_server
+    from open_targets_platform_mcp.server import setup_server
 
     mcp = setup_server()
 
@@ -90,7 +90,7 @@ def serve_stdio(
     config.jq_enabled = jq
 
     # Now import and setup server (triggers tool registration)
-    from platform_mcp.server import setup_server
+    from open_targets_platform_mcp.server import setup_server
 
     mcp = setup_server()
 
@@ -115,7 +115,7 @@ def list_tools(
     # Set jq configuration to show appropriate tool signatures
     config.jq_enabled = jq
 
-    from platform_mcp.server import setup_server
+    from open_targets_platform_mcp.server import setup_server
 
     mcp = setup_server()
 

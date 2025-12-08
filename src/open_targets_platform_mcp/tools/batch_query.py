@@ -4,8 +4,8 @@ from typing import Annotated, Optional
 
 from pydantic import Field
 
-from platform_mcp.client.graphql import execute_graphql_query
-from platform_mcp.config import config
+from open_targets_platform_mcp.client.graphql import execute_graphql_query
+from open_targets_platform_mcp.config import config
 
 # ============================================================================
 # Docstring Variants

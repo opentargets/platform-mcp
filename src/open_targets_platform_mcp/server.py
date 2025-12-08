@@ -2,7 +2,7 @@
 
 from fastmcp import FastMCP
 
-from platform_mcp.mcp_instance import mcp
+from open_targets_platform_mcp.mcp_instance import mcp
 
 
 def setup_server() -> FastMCP:
@@ -17,10 +17,10 @@ def setup_server() -> FastMCP:
     """
     # Import tool modules that don't need conditional registration
     # These imports trigger the @mcp.tool() decorators
-    from platform_mcp.tools import schema, search_entity  # noqa: F401
+    from open_targets_platform_mcp.tools import schema, search_entity  # noqa: F401
 
     # Conditionally register query tools based on jq_enabled config
-    from platform_mcp.tools.register import register_query_tools
+    from open_targets_platform_mcp.tools.register import register_query_tools
 
     register_query_tools()
 

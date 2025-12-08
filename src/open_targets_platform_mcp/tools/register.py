@@ -1,7 +1,7 @@
 """Conditional tool registration for OpenTargets MCP server."""
 
-from platform_mcp.config import config
-from platform_mcp.mcp_instance import mcp
+from open_targets_platform_mcp.config import config
+from open_targets_platform_mcp.mcp_instance import mcp
 
 
 def register_query_tools() -> None:
@@ -18,13 +18,13 @@ def register_query_tools() -> None:
 
 def _register_with_jq() -> None:
     """Register tools with jq filter support."""
-    from platform_mcp.tools.batch_query import (
+    from open_targets_platform_mcp.tools.batch_query import (
         DOCSTRING_WITH_JQ as BATCH_DOCSTRING_WITH_JQ,
     )
-    from platform_mcp.tools.batch_query import (
+    from open_targets_platform_mcp.tools.batch_query import (
         batch_query_with_jq,
     )
-    from platform_mcp.tools.query import DOCSTRING_WITH_JQ, query_with_jq
+    from open_targets_platform_mcp.tools.query import DOCSTRING_WITH_JQ, query_with_jq
 
     # Set docstrings before registration
     query_with_jq.__doc__ = DOCSTRING_WITH_JQ
@@ -37,13 +37,13 @@ def _register_with_jq() -> None:
 
 def _register_without_jq() -> None:
     """Register tools without jq filter support."""
-    from platform_mcp.tools.batch_query import (
+    from open_targets_platform_mcp.tools.batch_query import (
         DOCSTRING_WITHOUT_JQ as BATCH_DOCSTRING_WITHOUT_JQ,
     )
-    from platform_mcp.tools.batch_query import (
+    from open_targets_platform_mcp.tools.batch_query import (
         batch_query_without_jq,
     )
-    from platform_mcp.tools.query import DOCSTRING_WITHOUT_JQ, query_without_jq
+    from open_targets_platform_mcp.tools.query import DOCSTRING_WITHOUT_JQ, query_without_jq
 
     # Set docstrings before registration
     query_without_jq.__doc__ = DOCSTRING_WITHOUT_JQ
