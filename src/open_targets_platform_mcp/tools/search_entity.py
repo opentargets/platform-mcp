@@ -1,12 +1,11 @@
 """Tool for executing entity search queries."""
 
-from typing import Annotated
+from typing import Annotated, Any
 
 from pydantic import Field
 
 from open_targets_platform_mcp.client import execute_graphql_query
-from open_targets_platform_mcp.config import config
-from open_targets_platform_mcp.mcp_instance import mcp
+from open_targets_platform_mcp.settings import settings
 
 # GraphQL query for entity search - baked in directly
 SEARCH_ENTITY_QUERY = """
@@ -23,15 +22,14 @@ query searchEntity($queryString: String!) {
 """
 
 
-@mcp.tool(name="search_entity")
 def search_entity(
     query_strings: Annotated[
         list[str],
         Field(
-            description="List of search query strings to find entities (e.g., ['BRCA1', 'breast cancer', 'aspirin'])"
+            description="List of search query strings to find entities (e.g., ['BRCA1', 'breast cancer', 'aspirin'])",
         ),
     ],
-) -> dict:
+) -> dict[Any, Any]:
     """Search for entities across multiple types using the Open Targets search API.
 
     This tool performs a streamlined entity search that returns the id and entity type
@@ -63,7 +61,7 @@ def search_entity(
     jq_filter = ".data.search.hits[:3] | map({id, entity})"
 
     # Execute query for each search string
-    results = {}
+    results = dict[Any, Any]()
     for query_string in query_strings:
         variables = {
             "queryString": query_string,
@@ -71,7 +69,7 @@ def search_entity(
 
         try:
             result = execute_graphql_query(
-                config.api_endpoint,
+                str(settings.api_endpoint),
                 SEARCH_ENTITY_QUERY,
                 variables,
                 jq_filter=jq_filter,
@@ -81,7 +79,7 @@ def search_entity(
 
         # Store result keyed by query string
         # If there's an error, the whole result will be an error dict
-        if isinstance(result, dict) and "error" in result:
+        if "error" in result:
             return result
 
         results[query_string] = result

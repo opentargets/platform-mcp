@@ -1,138 +1,128 @@
-"""Command-line interface for OpenTargets MCP server."""
-
 import asyncio
 from importlib import metadata
 from typing import Annotated
 
 import typer
+from pydantic import HttpUrl
 
-from open_targets_platform_mcp.config import config
+from open_targets_platform_mcp.create_server import create_server
+from open_targets_platform_mcp.settings import TransportType, settings
 
-app = typer.Typer()
+PACKAGE_NAME = "open_targets_platform_mcp"
+PACKAGE_VERSION = metadata.version(PACKAGE_NAME)
+
+app = typer.Typer(
+    help=f"Model Context Protocol server for Open Targets Platform version {PACKAGE_VERSION}",
+)
 
 
-def _version_callback(value: bool) -> bool:
-    """Display the installed package version and exit when requested."""
+def _version_callback(value: bool) -> None:
+    """Show the package version and exit."""
     if value:
-        package_version = metadata.version("platform-mcp")
-        typer.echo(f"otpmcp {package_version}")
+        typer.echo(f"{PACKAGE_NAME} {PACKAGE_VERSION}")
         raise typer.Exit
-    return value
 
 
-@app.callback()
+def _list_tools_callback(value: bool) -> None:
+    """List all available MCP tools."""
+    if value:
+        mcp = create_server()
+        tools = asyncio.run(mcp.get_tools())
+        for name, tool in tools.items():
+            # Extract first line of description from the tool's description field
+            description = tool.description or "No description available"
+            first_line = description.split("\n")[0].strip()
+            typer.echo(f"  - {name}: {first_line}")
+        raise typer.Exit
+
+
+@app.callback(invoke_without_command=True)
 def root(
     version: Annotated[
         bool | None,
         typer.Option(
             "--version",
-            callback=_version_callback,
+            help=_version_callback.__doc__,
             is_eager=True,
-            help="Show the package version and exit.",
+            callback=_version_callback,
         ),
-    ],
+    ] = None,
+    list_tools: Annotated[
+        bool | None,
+        typer.Option(
+            "--list-tools",
+            help=_list_tools_callback.__doc__,
+            is_eager=True,
+            callback=_list_tools_callback,
+        ),
+    ] = None,
+    transport: Annotated[
+        TransportType | None,
+        typer.Option(
+            help="Protocol the server to use",
+            show_default=True,
+        ),
+    ] = settings.transport,
+    host: Annotated[
+        str | None,
+        typer.Option(
+            help="Host to bind the HTTP server to",
+            show_default=True,
+        ),
+    ] = settings.http_host,
+    port: Annotated[
+        int | None,
+        typer.Option(
+            help="Port to bind the HTTP server to",
+            show_default=True,
+        ),
+    ] = settings.http_port,
+    jq: Annotated[
+        bool | None,
+        typer.Option(
+            help="Enable/Disable jq filtering support for query tools",
+            show_default=True,
+        ),
+    ] = settings.jq_enabled,
+    api: Annotated[
+        str | None,
+        typer.Option(
+            help="Open Targets Platform API endpoint to use",
+            show_default=True,
+        ),
+    ] = str(settings.api_endpoint),
+    timeout: Annotated[
+        int | None,
+        typer.Option(
+            help="Request timeout (in seconds) for calls to the Open Targets Platform API.",
+            show_default=True,
+        ),
+    ] = settings.api_call_timeout,
 ) -> None:
-    """OpenTargets MCP - Model Context Protocol server for OpenTargets Platform API."""
+    """Entry point of CLI."""
+    settings.transport = settings.transport if transport is None else transport
+    settings.http_host = settings.http_host if host is None else host
+    settings.http_port = settings.http_port if port is None else port
+    settings.jq_enabled = settings.jq_enabled if jq is None else jq
+    settings.api_endpoint = settings.api_endpoint if api is None else HttpUrl(api)
+    settings.api_call_timeout = settings.api_call_timeout if timeout is None else timeout
 
+    mcp = create_server()
 
-@app.command(name="serve-http")
-def serve_http(
-    host: str = typer.Option(
-        config.http_host,
-        help="Host to bind the HTTP server to",
-        show_default=True,
-    ),
-    port: int = typer.Option(
-        config.http_port,
-        help="Port to bind the HTTP server to",
-        show_default=True,
-    ),
-    jq: bool = typer.Option(
-        False,
-        "--jq/--no-jq",
-        help="Enable jq filtering support for query tools",
-        show_default=True,
-    ),
-) -> None:
-    """Start the MCP server with HTTP transport.
-
-    This mode is useful for testing and development, or when you need to
-    access the MCP server over HTTP.
-    """
-    # Set jq configuration BEFORE importing server
-    config.jq_enabled = jq
-
-    # Now import and setup server (triggers tool registration)
-    from open_targets_platform_mcp.server import setup_server
-
-    mcp = setup_server()
-
-    jq_status = "enabled" if jq else "disabled"
-    typer.echo(f"Starting OpenTargets MCP server on http://{host}:{port}/mcp (jq filtering: {jq_status})")
-    mcp.run(transport="http", host=host, port=port)
-
-
-@app.command(name="serve-stdio")
-def serve_stdio(
-    jq: bool = typer.Option(
-        False,
-        "--jq/--no-jq",
-        help="Enable jq filtering support for query tools",
-        show_default=True,
-    ),
-) -> None:
-    """Start the MCP server with stdio transport.
-
-    This is the standard transport for MCP servers and is used by
-    Claude Desktop and other MCP clients.
-    """
-    # Set jq configuration BEFORE importing server
-    config.jq_enabled = jq
-
-    # Now import and setup server (triggers tool registration)
-    from open_targets_platform_mcp.server import setup_server
-
-    mcp = setup_server()
-
-    jq_status = "enabled" if jq else "disabled"
-    typer.echo(
-        f"Starting OpenTargets MCP server with stdio transport (jq filtering: {jq_status})",
-        err=True,
-    )
-    mcp.run(transport="stdio")
-
-
-@app.command(name="list-tools")
-def list_tools(
-    jq: bool = typer.Option(
-        False,
-        "--jq/--no-jq",
-        help="Show tools as they would appear with/without jq support",
-        show_default=True,
-    ),
-) -> None:
-    """List all available MCP tools."""
-    # Set jq configuration to show appropriate tool signatures
-    config.jq_enabled = jq
-
-    from open_targets_platform_mcp.server import setup_server
-
-    mcp = setup_server()
-
-    jq_status = "with jq support" if jq else "without jq support"
-    typer.echo(f"Available tools ({jq_status}):")
-
-    # Dynamically list all registered tools using public API
-    tools = asyncio.run(mcp.get_tools())
-    for name, tool in tools.items():
-        # Extract first line of description from the tool's description field
-        description = tool.description or "No description available"
-        first_line = description.split("\n")[0].strip()
-        typer.echo(f"  - {name}: {first_line}")
+    if settings.transport == TransportType.HTTP:
+        mcp.run(
+            transport=settings.transport.value,
+            host=settings.http_host,
+            port=settings.http_port,
+        )
+    else:
+        mcp.run(
+            transport=settings.transport.value,
+        )
 
 
 def main() -> None:
-    """Main entry point for the CLI."""
+    """Entry point of the application."""
     app()
 
 

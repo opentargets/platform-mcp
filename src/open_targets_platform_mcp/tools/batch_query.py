@@ -1,11 +1,11 @@
 """Batch query execution tool for Open Targets GraphQL API."""
 
-from typing import Annotated, Optional
+from typing import Annotated, Any
 
 from pydantic import Field
 
 from open_targets_platform_mcp.client.graphql import execute_graphql_query
-from open_targets_platform_mcp.config import config
+from open_targets_platform_mcp.settings import settings
 
 # ============================================================================
 # Docstring Variants
@@ -143,10 +143,10 @@ Returns:
 
 def _batch_query_impl(
     query_string: str,
-    variables_list: list[dict],
+    variables_list: list[dict[Any, Any]],
     key_field: str,
-    jq_filter: Optional[str] = None,
-) -> dict:
+    jq_filter: str | None = None,
+) -> dict[Any, Any]:
     """Internal implementation - handles both jq-enabled and disabled modes."""
     try:
         # Validate that variables_list is not empty
@@ -160,7 +160,7 @@ def _batch_query_impl(
         total_count = len(variables_list)
 
         # Only use jq_filter if enabled
-        effective_jq_filter = jq_filter if config.jq_enabled else None
+        effective_jq_filter = jq_filter if settings.jq_enabled else None
 
         # Execute queries sequentially
         # TODO: Add parallel execution support for better performance
@@ -182,7 +182,7 @@ def _batch_query_impl(
             try:
                 # Execute the GraphQL query (jq filter applied inside execute_graphql_query)
                 response = execute_graphql_query(
-                    endpoint_url=config.api_endpoint,
+                    endpoint_url=str(settings.api_endpoint),
                     query_string=query_string,
                     variables=variables,
                     jq_filter=effective_jq_filter,
@@ -229,18 +229,18 @@ def _batch_query_impl(
 
 def batch_query_with_jq(
     query_string: Annotated[str, Field(description="GraphQL query string")],
-    variables_list: Annotated[list[dict], Field(description="List of variables for each query execution")],
+    variables_list: Annotated[list[dict[Any, Any]], Field(description="List of variables for each query execution")],
     key_field: Annotated[str, Field(description="Variable field to use as result key")],
-    jq_filter: Annotated[Optional[str], Field(description="Optional jq filter applied to all results")] = None,
-) -> dict:
+    jq_filter: Annotated[str | None, Field(description="Optional jq filter applied to all results")] = None,
+) -> dict[Any, Any]:
     """Batch query with jq support - signature includes jq_filter."""
     return _batch_query_impl(query_string, variables_list, key_field, jq_filter)
 
 
 def batch_query_without_jq(
     query_string: Annotated[str, Field(description="GraphQL query string")],
-    variables_list: Annotated[list[dict], Field(description="List of variables for each query execution")],
+    variables_list: Annotated[list[dict[Any, Any]], Field(description="List of variables for each query execution")],
     key_field: Annotated[str, Field(description="Variable field to use as result key")],
-) -> dict:
+) -> dict[Any, Any]:
     """Batch query without jq support - signature excludes jq_filter."""
     return _batch_query_impl(query_string, variables_list, key_field, None)

@@ -1,12 +1,10 @@
 """Tool for fetching the OpenTargets GraphQL schema."""
 
 from pathlib import Path
+from typing import Any
 
-from open_targets_platform_mcp.mcp_instance import mcp
 
-
-@mcp.tool()
-def get_open_targets_graphql_schema() -> dict:
+def get_open_targets_graphql_schema() -> dict[Any, Any]:
     """Retrieve the Open Targets GraphQL schema for query construction.
 
     Returns:

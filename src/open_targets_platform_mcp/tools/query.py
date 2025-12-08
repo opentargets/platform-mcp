@@ -1,12 +1,12 @@
 """Tool for executing GraphQL queries against the OpenTargets API."""
 
 import json
-from typing import Annotated, Optional, Union
+from typing import Annotated, Any
 
 from pydantic import Field
 
 from open_targets_platform_mcp.client import execute_graphql_query
-from open_targets_platform_mcp.config import config
+from open_targets_platform_mcp.settings import settings
 
 # ============================================================================
 # Docstring Variants
@@ -122,13 +122,13 @@ Returns:
 
 def _query_impl(
     query_string: str,
-    variables: Optional[Union[dict, str]] = None,
-    jq_filter: Optional[str] = None,
-) -> dict:
+    variables: dict[Any, Any] | str | None = None,
+    jq_filter: str | None = None,
+) -> dict[Any, Any]:
     """Internal implementation - always accepts jq_filter but only uses it if enabled."""
     try:
         # Parse variables if provided as a JSON string
-        parsed_variables: Optional[dict] = variables if isinstance(variables, dict) else None
+        parsed_variables: dict[Any, Any] | None = variables if isinstance(variables, dict) else None
         if isinstance(variables, str):
             try:
                 parsed_variables = json.loads(variables)
@@ -136,9 +136,9 @@ def _query_impl(
                 return {"error": f"Failed to parse variables JSON string: {e!s}"}
 
         # Only pass jq_filter if jq is enabled
-        effective_jq_filter = jq_filter if config.jq_enabled else None
+        effective_jq_filter = jq_filter if settings.jq_enabled else None
         return execute_graphql_query(
-            config.api_endpoint,
+            str(settings.api_endpoint),
             query_string,
             parsed_variables,
             jq_filter=effective_jq_filter,
@@ -155,14 +155,14 @@ def _query_impl(
 def query_with_jq(
     query_string: Annotated[str, Field(description="GraphQL query string starting with 'query' keyword")],
     variables: Annotated[
-        Optional[Union[dict, str]],
+        dict[Any, Any] | str | None,
         Field(description="Optional variables for the GraphQL query"),
     ] = None,
     jq_filter: Annotated[
-        Optional[str],
+        str | None,
         Field(description="Optional jq filter to pre-filter the JSON response server-side"),
     ] = None,
-) -> dict:
+) -> dict[Any, Any]:
     """Query with jq support - signature includes jq_filter."""
     return _query_impl(query_string, variables, jq_filter)
 
@@ -170,9 +170,9 @@ def query_with_jq(
 def query_without_jq(
     query_string: Annotated[str, Field(description="GraphQL query string starting with 'query' keyword")],
     variables: Annotated[
-        Optional[Union[dict, str]],
+        dict[Any, Any] | str | None,
         Field(description="Optional variables for the GraphQL query"),
     ] = None,
-) -> dict:
+) -> dict[Any, Any]:
     """Query without jq support - signature excludes jq_filter."""
     return _query_impl(query_string, variables, None)

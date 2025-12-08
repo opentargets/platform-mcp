@@ -741,6 +741,7 @@ dependencies = [
     { name = "gql", extra = ["requests"] },
     { name = "jq" },
     { name = "pydantic" },
+    { name = "pydantic-settings" },
     { name = "typer" },
 ]
 
@@ -756,6 +757,7 @@ requires-dist = [
     { name = "gql", extras = ["requests"], specifier = ">=4.0.0" },
     { name = "jq", specifier = ">=1.10.0" },
     { name = "pydantic", specifier = ">=2.12.4" },
+    { name = "pydantic-settings", specifier = ">=2.12.0" },
     { name = "typer", specifier = ">=0.20.0" },
 ]
 

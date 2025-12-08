@@ -1,5 +1,5 @@
 """OpenTargets MCP - Model Context Protocol server for OpenTargets Platform API."""
 
-from open_targets_platform_mcp.server import mcp, setup_server
+from importlib.metadata import version
 
-__all__ = ["mcp", "setup_server"]
+__version__ = version("open_targets_platform_mcp")

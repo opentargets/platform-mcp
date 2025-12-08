@@ -1,7 +1,7 @@
 """Conditional tool registration for OpenTargets MCP server."""
 
-from open_targets_platform_mcp.config import config
-from open_targets_platform_mcp.mcp_instance import mcp
+from open_targets_platform_mcp.server import mcp
+from open_targets_platform_mcp.settings import settings
 
 
 def register_query_tools() -> None:
@@ -10,7 +10,7 @@ def register_query_tools() -> None:
     This function should be called once during server setup,
     after config.jq_enabled has been set.
     """
-    if config.jq_enabled:
+    if settings.jq_enabled:
         _register_with_jq()
     else:
         _register_without_jq()
