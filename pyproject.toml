@@ -1,41 +1,45 @@
 [project]
-name = "platform-mcp"
+name = "open-targets-platform-mcp"
 version = "0.0.1"
-description = "Official implementation of Open Targets Platform MCP"
+description = "Official implementation of Model Context Protocol for Open Targets Platform"
 authors = [
     { name = "Francesco Carli", email = "carli@ebi.ac.uk" },
     { name = "Paul Ka Po To", email = "kto@ebi.ac.uk" },
 ]
 readme = "README.md"
 keywords = ['python']
-requires-python = ">=3.10,<4.0"
+requires-python = ">=3.10,<3.14"
 classifiers = [
-    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Healthcare Industry",
+    "Intended Audience :: Education",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Topic :: Scientific/Engineering :: Medical Science Apps.",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
-    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed"
 ]
 dependencies = [
     "fastmcp>=2.13.0.2",
     "gql[requests]>=4.0.0",
     "pydantic>=2.12.4",
-    "click>=8.0.0",
     "jq>=1.10.0",
-    "rank-bm25>=0.2.2",
+    "typer>=0.20.0",
 ]
 
 [project.scripts]
-platform-mcp = "platform_mcp.cli:main"
+open-targets-platform-mcp = "open_targets_platform_mcp.cli:main"
+otp-mcp = "open_targets_platform_mcp.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/opentargets/platform-mcp"
-Repository = "https://github.com/opentargets/platform-mcp"
-Documentation = "https://github.com/opentargets/platform-mcp"
+Homepage = "https://github.com/opentargets/open-targets-platform-mcp"
+Repository = "https://github.com/opentargets/open-targets-platform-mcp"
+Documentation = "https://github.com/opentargets/open-targets-platform-mcp"
 
 [dependency-groups]
 dev = ["pytest>=7.2.0", "ruff>=0.11.5"]
@@ -56,6 +60,7 @@ line-length = 120
 
 [tool.ruff.lint]
 select = ["ALL"]
+ignore = ["D100"]
 
 [tool.ruff.lint.pycodestyle]
 max-doc-length = 80
