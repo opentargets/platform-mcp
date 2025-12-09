@@ -1,10 +1,10 @@
 # OpenTargets MCP
 
-[![Release](https://img.shields.io/github/v/release/opentargets/otar-mcp)](https://github.com/opentargets/otar-mcp/releases)
-[![Build status](https://img.shields.io/github/actions/workflow/status/opentargets/otar-mcp/main.yml?branch=main)](https://github.com/opentargets/otar-mcp/actions/workflows/main.yml?query=branch%3Amain)
-[![codecov](https://codecov.io/gh/opentargets/otar-mcp/branch/main/graph/badge.svg)](https://codecov.io/gh/opentargets/otar-mcp)
-[![Commit activity](https://img.shields.io/github/commit-activity/m/opentargets/otar-mcp)](https://github.com/opentargets/otar-mcp/commits)
-[![License](https://img.shields.io/github/license/opentargets/otar-mcp)](https://github.com/opentargets/otar-mcp/blob/main/LICENSE)
+[![Release](https://img.shields.io/github/v/release/opentargets/open-targets-platform-mcp)](https://github.com/opentargets/open-targets-platform-mcp/releases)
+[![Build status](https://img.shields.io/github/actions/workflow/status/opentargets/open-targets-platform-mcp/main.yml?branch=main)](https://github.com/opentargets/open-targets-platform-mcp/actions/workflows/main.yml?query=branch%3Amain)
+[![codecov](https://codecov.io/gh/opentargets/open-targets-platform-mcp/branch/main/graph/badge.svg)](https://codecov.io/gh/opentargets/open-targets-platform-mcp)
+[![Commit activity](https://img.shields.io/github/commit-activity/m/opentargets/open-targets-platform-mcp)](https://github.com/opentargets/open-targets-platform-mcp/commits)
+[![License](https://img.shields.io/github/license/opentargets/open-targets-platform-mcp)](https://github.com/opentargets/open-targets-platform-mcp/blob/main/LICENSE)
 
 > **⚠️ DISCLAIMER: This project is currently experimental and under active development. Features, APIs, and documentation may change without notice ⚠️**
 
@@ -87,7 +87,7 @@ Add this configuration to your Claude Desktop config file:
 ```json
 {
   "mcpServers": {
-    "otar-mcp": {
+    "open-targets-platform-mcp": {
       "type": "url",
       "url": "https://mcp.platform.opentargets.org/mcp"
     }
@@ -109,8 +109,8 @@ For development, testing, or running your own instance, you can install and run 
 #### Installation
 
 ```bash
-git clone https://github.com/opentargets/otar-mcp.git
-cd otar-mcp
+git clone https://github.com/opentargets/open-targets-platform-mcp.git
+cd open-targets-platform-mcp
 uv sync
 ```
 
@@ -119,16 +119,16 @@ uv sync
 ```json
 {
   "mcpServers": {
-    "otar-mcp": {
+    "open-targets-platform-mcp": {
       "command": "uv",
       "args": [
         "run",
         "--directory",
-        "<your-path>/otar-mcp",
-        "otar-mcp",
-        "serve-stdio"
-      ],
-      "transport": "stdio"
+        "<your-path>/open-targets-platform-mcp",
+        "open-targets-platform-mcp",
+        "--transport",
+        "stdio"
+      ]
     }
   }
 }
@@ -139,17 +139,17 @@ To enable jq filtering support (see [JQ Filtering](#jq-filtering-optional) secti
 ```json
 {
   "mcpServers": {
-    "otar-mcp": {
+    "open-targets-platform-mcp": {
       "command": "uv",
       "args": [
         "run",
         "--directory",
-        "<your-path>/otar-mcp",
-        "otar-mcp",
-        "serve-stdio",
+        "<your-path>/open-targets-platform-mcp",
+        "open-targets-platform-mcp",
+        "--transport",
+        "stdio",
         "--jq"
-      ],
-      "transport": "stdio"
+      ]
     }
   }
 }
@@ -159,42 +159,64 @@ To enable jq filtering support (see [JQ Filtering](#jq-filtering-optional) secti
 
 ```bash
 # Start HTTP server (for testing/development)
-uv run otar-mcp serve-http
-uv run otar-mcp serve-http --host 127.0.0.1 --port 8000
-uv run otar-mcp serve-http --jq  # with jq filtering
+uv run open-targets-platform-mcp --transport http
+uv run open-targets-platform-mcp --transport http --host 127.0.0.1 --port 8000
+uv run open-targets-platform-mcp --transport http --jq  # with jq filtering
 
 # Start stdio server
-uv run otar-mcp serve-stdio
-uv run otar-mcp serve-stdio --jq  # with jq filtering
+uv run open-targets-platform-mcp --transport stdio
+uv run open-targets-platform-mcp --transport stdio --jq  # with jq filtering
 
 # List available tools
-uv run otar-mcp list-tools
-uv run otar-mcp list-tools --jq  # show tools with jq support
+uv run open-targets-platform-mcp --list-tools
+uv run open-targets-platform-mcp --list-tools --jq  # show tools with jq support
+
+# Alternative: use shorter command alias
+uv run otp-mcp --transport stdio
 ```
 
 #### Environment Variables
 
-Configure the server using environment variables:
+Configure the server using environment variables (all prefixed with `OTP_MCP_`). The following table shows all available configuration options:
 
-- `OPENTARGETS_API_ENDPOINT`: OpenTargets API endpoint (default: https://api.platform.opentargets.org/api/v4/graphql)
-- `MCP_SERVER_NAME`: Server name (default: "Open Targets MCP")
-- `MCP_HTTP_HOST`: HTTP server host (default: "127.0.0.1")
-- `MCP_HTTP_PORT`: HTTP server port (default: "8000")
-- `OPENTARGETS_TIMEOUT`: Request timeout in seconds (default: "30")
-- `OPENTARGETS_JQ_ENABLED`: Enable jq filtering support (default: "false")
+| Environment Variable | CLI Option | Description | Default |
+|---------------------|------------|-------------|---------|
+| `OTP_MCP_API_ENDPOINT` | `--api` | OpenTargets API endpoint URL | `https://api.platform.opentargets.org/api/v4/graphql` |
+| `OTP_MCP_SERVER_NAME` | *(no CLI option)* | Server name displayed in MCP | `"Model Context Protocol server for Open Targets Platform"` |
+| `OTP_MCP_TRANSPORT` | `--transport` | Transport type: `stdio` or `http` | `http` |
+| `OTP_MCP_HTTP_HOST` | `--host` | HTTP server host (only used with `http` transport) | `localhost` |
+| `OTP_MCP_HTTP_PORT` | `--port` | HTTP server port (only used with `http` transport) | `8000` |
+| `OTP_MCP_API_CALL_TIMEOUT` | `--timeout` | Request timeout in seconds for API calls | `30` |
+| `OTP_MCP_JQ_ENABLED` | `--jq` / `--no-jq` | Enable/disable jq filtering support | `true` |
+
+**Examples:**
+
+Using environment variables:
+```bash
+export OTP_MCP_TRANSPORT=stdio
+export OTP_MCP_JQ_ENABLED=false
+open-targets-platform-mcp
+```
+
+Using CLI options:
+```bash
+open-targets-platform-mcp --transport stdio --no-jq
+```
+
+**Note:** CLI options take precedence over environment variables when both are provided.
 
 ### JQ Filtering (Optional)
 
-The MCP server supports optional server-side JSON filtering using jq expressions. This feature is **disabled by default** to simplify the tool interface for most users.
+The MCP server supports optional server-side JSON filtering using jq expressions. This feature is **enabled by default** but can be disabled if you prefer simpler tool interfaces.
 
-#### When to Enable JQ Filtering
+#### When to Use JQ Filtering
 
-Enable jq filtering when:
+JQ filtering is enabled by default and is recommended when:
 - You want to reduce token consumption by extracting only specific fields from API responses
 - Working with large API responses where only a subset of data is needed
 - The calling LLM is proficient at tool calling and can reliably construct jq filters
 
-Keep jq disabled (default) when:
+Disable jq filtering when:
 - Simplicity is preferred over optimization
 - Working with straightforward queries that don't benefit from filtering
 - The LLM should receive complete API responses
@@ -203,14 +225,14 @@ Keep jq disabled (default) when:
 
 **Via CLI flag:**
 ```bash
-otar-mcp serve-stdio --jq
-otar-mcp serve-http --jq
+open-targets-platform-mcp --transport stdio --jq
+open-targets-platform-mcp --transport http --jq
 ```
 
 **Via environment variable:**
 ```bash
-export OPENTARGETS_JQ_ENABLED=true
-otar-mcp serve-stdio
+export OTP_MCP_JQ_ENABLED=false  # Disable jq (it's enabled by default)
+open-targets-platform-mcp --transport stdio
 ```
 
 #### How JQ Filtering Works
@@ -229,10 +251,12 @@ This significantly reduces token consumption by returning only the requested fie
 ### Setup development environment
 
 ```bash
-make install
-```
+# Install the package with development dependencies
+uv sync --dev
 
-This will install the package with development dependencies and set up pre-commit hooks.
+# Install pre-commit hooks (if configured)
+uv run pre-commit install
+```
 
 ### Run tests
 
@@ -249,38 +273,54 @@ uv run pre-commit run -a
 ### Project Structure
 
 ```
-otar-mcp/
-├── src/otar_mcp/
+open-targets-platform-mcp/
+├── src/open_targets_platform_mcp/
 │   ├── __init__.py          # Package initialization
-│   ├── __main__.py          # Entry point for python -m otar_mcp
 │   ├── cli.py               # Command-line interface
-│   ├── config.py            # Configuration management
-│   ├── server.py            # MCP server setup
-│   ├── mcp_instance.py      # MCP instance management
+│   ├── create_server.py     # MCP server creation and setup
+│   ├── server.py            # FastMCP server instance
+│   ├── settings.py          # Configuration management (pydantic-settings)
+│   ├── types.py             # Type definitions (TransportType, etc.)
 │   ├── client/              # GraphQL client utilities
 │   │   ├── __init__.py
-│   │   └── graphql.py
-│   ├── tools/               # MCP tools
-│   │   ├── __init__.py
-│   │   ├── schema.py        # Schema fetching tool
-│   │   ├── query.py         # Query execution tool
-│   │   ├── batch_query.py   # Batch query tool
-│   │   ├── search.py        # Search tool
-│   │   └── register.py      # Conditional tool registration
-│   └── utils/               # Utility functions
-│       └── __init__.py
+│   │   └── graphql.py       # GraphQL client implementation
+│   ├── model/               # Data models
+│   │   └── result.py        # Query result models
+│   ├── tools/               # MCP tools (organized by feature)
+│   │   ├── __init__.py      # Tool exports
+│   │   ├── schema/          # Schema fetching tool
+│   │   │   ├── schema.py
+│   │   │   └── schema.txt
+│   │   ├── query/           # Query execution tool
+│   │   │   ├── query.py
+│   │   │   ├── with_jq_description.txt
+│   │   │   └── without_jq_description.txt
+│   │   ├── batch_query/     # Batch query tool
+│   │   │   ├── batch_query.py
+│   │   │   ├── with_jq_description.txt
+│   │   │   └── without_jq_description.txt
+│   │   └── search_entities/ # Entity search tool
+│   │       ├── search_entities.py
+│   │       └── description.txt
+│   └── static/              # Static assets
+│       └── favicon.png
 ├── tests/                   # Test suite
 │   ├── conftest.py
 │   ├── test_client/
-│   └── test_tools/
-└── utils_scripts/           # Utility scripts for maintenance
-    └── annotate_schema_metadata.py
+│   │   └── test_graphql.py
+│   ├── test_tools/
+│   │   ├── test_schema.py
+│   │   ├── test_query.py
+│   │   └── test_batch_query.py
+│   ├── test_config.py
+│   └── test_server.py
+└── pyproject.toml           # Project configuration and dependencies
 ```
 
 
 ## Contributing
 
-Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+Contributions are welcome! Please open an issue or submit a pull request on the [GitHub repository](https://github.com/opentargets/open-targets-platform-mcp).
 
 ## License
 
