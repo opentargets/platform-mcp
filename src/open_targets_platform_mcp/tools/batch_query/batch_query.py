@@ -51,7 +51,9 @@ async def _batch_query_impl(
     if not variables_list:
         return QueryResult.create_error("variables_list cannot be empty")
 
-    semaphore = asyncio.Semaphore(3)
+    # serialising the execution for now before the GraphQL client cache is
+    # implemented.
+    semaphore = asyncio.Semaphore(1)
     tasks = [
         _handle_single_query(idx, query_string, variables, key_field, jq_filter, semaphore)
         for idx, variables in enumerate(variables_list)
