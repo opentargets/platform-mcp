@@ -21,22 +21,24 @@ async def _handle_single_query(
     variables: dict[str, Any],
     key_field: str,
     jq_filter: str | None,
+    semaphore: asyncio.Semaphore,
 ) -> BatchQuerySingleResult:
-    result: QueryResult | None = None
-    key: str | None = None
-    if key_field not in variables:
-        key = None
-        result = QueryResult.create_error(
-            f"Key field '{key_field}' not found in variables at index {index}",
-            variables=variables,
-        )
-    else:
-        key = str(variables[key_field])
-        result = await execute_graphql_query(query_string, variables, jq_filter=jq_filter)
-        if result.status in (QueryResultStatus.ERROR, QueryResultStatus.WARNING):
-            result = result.model_copy(update={"variables": variables})
+    async with semaphore:
+        result: QueryResult | None = None
+        key: str | None = None
+        if key_field not in variables:
+            key = None
+            result = QueryResult.create_error(
+                f"Key field '{key_field}' not found in variables at index {index}",
+                variables=variables,
+            )
+        else:
+            key = str(variables[key_field])
+            result = await execute_graphql_query(query_string, variables, jq_filter=jq_filter)
+            if result.status in (QueryResultStatus.ERROR, QueryResultStatus.WARNING):
+                result = result.model_copy(update={"variables": variables})
 
-    return BatchQuerySingleResult(index=index, key=key, result=result)
+        return BatchQuerySingleResult(index=index, key=key, result=result)
 
 
 async def _batch_query_impl(
@@ -49,8 +51,9 @@ async def _batch_query_impl(
     if not variables_list:
         return QueryResult.create_error("variables_list cannot be empty")
 
+    semaphore = asyncio.Semaphore(3)
     tasks = [
-        _handle_single_query(idx, query_string, variables, key_field, jq_filter)
+        _handle_single_query(idx, query_string, variables, key_field, jq_filter, semaphore)
         for idx, variables in enumerate(variables_list)
     ]
     results = await asyncio.gather(*tasks)
