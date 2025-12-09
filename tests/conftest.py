@@ -96,8 +96,8 @@ def sample_search_response() -> dict:
                 {"id": "ENSG00000012048", "entity": "target", "name": "BRCA1"},
                 {"id": "EFO_0000305", "entity": "disease", "name": "breast carcinoma"},
                 {"id": "CHEMBL25", "entity": "drug", "name": "Aspirin"},
-            ]
-        }
+            ],
+        },
     }
 
 
@@ -189,11 +189,12 @@ def complex_jq_filter() -> str:
 def clean_env(monkeypatch):
     """Remove all OpenTargets environment variables."""
     env_vars = [
-        "OPENTARGETS_API_ENDPOINT",
-        "MCP_SERVER_NAME",
-        "MCP_HTTP_HOST",
-        "MCP_HTTP_PORT",
-        "OPENTARGETS_TIMEOUT",
+        "OTP_MCP_API_ENDPOINT",
+        "OTP_MCP_SERVER_NAME",
+        "OTP_MCP_HTTP_HOST",
+        "OTP_MCP_HTTP_PORT",
+        "OTP_MCP_API_CALL_TIMEOUT",
+        "OTP_MCP_JQ_ENABLED",
     ]
     for var in env_vars:
         monkeypatch.delenv(var, raising=False)
@@ -202,11 +203,11 @@ def clean_env(monkeypatch):
 @pytest.fixture
 def custom_env(monkeypatch):
     """Set custom environment variables for testing."""
-    monkeypatch.setenv("OPENTARGETS_API_ENDPOINT", "https://custom.api.test/graphql")
-    monkeypatch.setenv("MCP_SERVER_NAME", "Test Server")
-    monkeypatch.setenv("MCP_HTTP_HOST", "0.0.0.0")
-    monkeypatch.setenv("MCP_HTTP_PORT", "9000")
-    monkeypatch.setenv("OPENTARGETS_TIMEOUT", "60")
+    monkeypatch.setenv("OTP_MCP_API_ENDPOINT", "https://custom.api.test/graphql")
+    monkeypatch.setenv("OTP_MCP_SERVER_NAME", "Test Server")
+    monkeypatch.setenv("OTP_MCP_HTTP_HOST", "0.0.0.0")
+    monkeypatch.setenv("OTP_MCP_HTTP_PORT", "9000")
+    monkeypatch.setenv("OTP_MCP_API_CALL_TIMEOUT", "60")
 
 
 # ============================================================================

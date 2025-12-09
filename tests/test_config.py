@@ -2,124 +2,106 @@
 
 import pytest
 
-from otar_mcp.config import Config
+from open_targets_platform_mcp.settings import Settings
 
 
-class TestConfig:
-    """Tests for Config class."""
+class TestSettings:
+    """Tests for Settings class."""
 
-    def test_config_default_values(self, clean_env):
-        """Test that Config uses default values when no env vars are set."""
-        config = Config()
+    def test_settings_default_values(self, clean_env):
+        """Test that Settings uses default values when no env vars are set."""
+        settings = Settings()
 
-        assert config.api_endpoint == "https://api.platform.opentargets.org/api/v4/graphql"
-        assert config.server_name == "Open Targets MCP"
-        assert config.http_host == "127.0.0.1"
-        assert config.http_port == 8000
-        assert config.timeout == 30
+        assert str(settings.api_endpoint) == "https://api.platform.opentargets.org/api/v4/graphql"
+        assert settings.server_name == "Model Context Protocol server for Open Targets Platform"
+        assert settings.http_host == "localhost"
+        assert settings.http_port == 8000
+        assert settings.api_call_timeout == 30
+        assert settings.jq_enabled is True
 
-    def test_config_custom_env_values(self, custom_env):
-        """Test that Config reads from environment variables."""
-        config = Config()
+    def test_settings_custom_env_values(self, custom_env):
+        """Test that Settings reads from environment variables."""
+        settings = Settings()
 
-        assert config.api_endpoint == "https://custom.api.test/graphql"
-        assert config.server_name == "Test Server"
-        assert config.http_host == "0.0.0.0"
-        assert config.http_port == 9000
-        assert config.timeout == 60
+        assert str(settings.api_endpoint) == "https://custom.api.test/graphql"
+        assert settings.server_name == "Test Server"
+        assert settings.http_host == "0.0.0.0"
+        assert settings.http_port == 9000
+        assert settings.api_call_timeout == 60
 
-    def test_config_partial_env_values(self, clean_env, monkeypatch):
-        """Test that Config uses defaults for missing env vars."""
-        monkeypatch.setenv("MCP_SERVER_NAME", "Partial Config")
-        monkeypatch.setenv("MCP_HTTP_PORT", "3000")
+    def test_settings_partial_env_values(self, clean_env, monkeypatch):
+        """Test that Settings uses defaults for missing env vars."""
+        monkeypatch.setenv("OTP_MCP_SERVER_NAME", "Partial Config")
+        monkeypatch.setenv("OTP_MCP_HTTP_PORT", "3000")
 
-        config = Config()
+        settings = Settings()
 
         # Custom values
-        assert config.server_name == "Partial Config"
-        assert config.http_port == 3000
+        assert settings.server_name == "Partial Config"
+        assert settings.http_port == 3000
 
         # Default values for others
-        assert config.api_endpoint == "https://api.platform.opentargets.org/api/v4/graphql"
-        assert config.http_host == "127.0.0.1"
-        assert config.timeout == 30
+        assert str(settings.api_endpoint) == "https://api.platform.opentargets.org/api/v4/graphql"
+        assert settings.http_host == "localhost"
+        assert settings.api_call_timeout == 30
 
-    def test_config_mcp_url_property(self, clean_env):
-        """Test mcp_url property constructs correct URL."""
-        config = Config()
-
-        expected_url = "http://127.0.0.1:8000/mcp"
-        assert config.mcp_url == expected_url
-
-    def test_config_mcp_url_property_custom_values(self, custom_env):
-        """Test mcp_url property with custom host and port."""
-        config = Config()
-
-        expected_url = "http://0.0.0.0:9000/mcp"
-        assert config.mcp_url == expected_url
-
-    def test_config_port_type_conversion(self, clean_env, monkeypatch):
+    def test_settings_port_type_conversion(self, clean_env, monkeypatch):
         """Test that port is converted to int from string env var."""
-        monkeypatch.setenv("MCP_HTTP_PORT", "5555")
-        config = Config()
+        monkeypatch.setenv("OTP_MCP_HTTP_PORT", "5555")
+        settings = Settings()
 
-        assert isinstance(config.http_port, int)
-        assert config.http_port == 5555
+        assert isinstance(settings.http_port, int)
+        assert settings.http_port == 5555
 
-    def test_config_timeout_type_conversion(self, clean_env, monkeypatch):
+    def test_settings_timeout_type_conversion(self, clean_env, monkeypatch):
         """Test that timeout is converted to int from string env var."""
-        monkeypatch.setenv("OPENTARGETS_TIMEOUT", "120")
-        config = Config()
+        monkeypatch.setenv("OTP_MCP_API_CALL_TIMEOUT", "120")
+        settings = Settings()
 
-        assert isinstance(config.timeout, int)
-        assert config.timeout == 120
+        assert isinstance(settings.api_call_timeout, int)
+        assert settings.api_call_timeout == 120
 
-    def test_config_invalid_port_raises_error(self, clean_env, monkeypatch):
+    def test_settings_invalid_port_raises_error(self, clean_env, monkeypatch):
         """Test that invalid port value raises ValueError."""
-        monkeypatch.setenv("MCP_HTTP_PORT", "not_a_number")
+        monkeypatch.setenv("OTP_MCP_HTTP_PORT", "not_a_number")
 
         with pytest.raises(ValueError):
-            Config()
+            Settings()
 
-    def test_config_invalid_timeout_raises_error(self, clean_env, monkeypatch):
+    def test_settings_invalid_timeout_raises_error(self, clean_env, monkeypatch):
         """Test that invalid timeout value raises ValueError."""
-        monkeypatch.setenv("OPENTARGETS_TIMEOUT", "invalid")
+        monkeypatch.setenv("OTP_MCP_API_CALL_TIMEOUT", "invalid")
 
         with pytest.raises(ValueError):
-            Config()
+            Settings()
 
-    def test_config_environment_variable_names(self, clean_env, monkeypatch):
+    def test_settings_environment_variable_names(self, clean_env, monkeypatch):
         """Test all environment variable names are correctly read."""
         env_vars = {
-            "OPENTARGETS_API_ENDPOINT": "https://test1.api/graphql",
-            "MCP_SERVER_NAME": "TestName",
-            "MCP_HTTP_HOST": "10.0.0.1",
-            "MCP_HTTP_PORT": "7777",
-            "OPENTARGETS_TIMEOUT": "90",
+            "OTP_MCP_API_ENDPOINT": "https://test1.api/graphql",
+            "OTP_MCP_SERVER_NAME": "TestName",
+            "OTP_MCP_HTTP_HOST": "10.0.0.1",
+            "OTP_MCP_HTTP_PORT": "7777",
+            "OTP_MCP_API_CALL_TIMEOUT": "90",
         }
 
         for key, value in env_vars.items():
             monkeypatch.setenv(key, value)
 
-        config = Config()
+        settings = Settings()
 
-        assert config.api_endpoint == "https://test1.api/graphql"
-        assert config.server_name == "TestName"
-        assert config.http_host == "10.0.0.1"
-        assert config.http_port == 7777
-        assert config.timeout == 90
+        assert str(settings.api_endpoint) == "https://test1.api/graphql"
+        assert settings.server_name == "TestName"
+        assert settings.http_host == "10.0.0.1"
+        assert settings.http_port == 7777
+        assert settings.api_call_timeout == 90
 
-    def test_config_instances_independent(self, clean_env, monkeypatch):
-        """Test that Config instances read env vars at initialization time."""
-        # Create first config with default values
-        config1 = Config()
-        assert config1.server_name == "Open Targets MCP"
+    def test_settings_update_method(self, clean_env):
+        """Test that Settings.update() method works."""
+        settings = Settings()
+        original_name = settings.server_name
 
-        # Set env var and create second config
-        monkeypatch.setenv("MCP_SERVER_NAME", "Modified Server")
-        config2 = Config()
+        settings.update(server_name="Updated Name")
 
-        # First config should still have old value
-        assert config1.server_name == "Open Targets MCP"
-        # Second config should have new value
-        assert config2.server_name == "Modified Server"
+        assert settings.server_name == "Updated Name"
+        assert settings.server_name != original_name
