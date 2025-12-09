@@ -55,6 +55,14 @@ def root(
             callback=_list_tools_callback,
         ),
     ] = None,
+    server_name: Annotated[
+        str | None,
+        typer.Option(
+            "--name",
+            help="Name of the server",
+            show_default=True,
+        ),
+    ] = settings.server_name,
     transport: Annotated[
         TransportType | None,
         typer.Option(
