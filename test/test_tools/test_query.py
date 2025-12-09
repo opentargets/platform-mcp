@@ -108,17 +108,15 @@ class TestQueryOpenTargetsGraphQL:
 
     @pytest.mark.asyncio
     async def test_query_exception_handling(self, sample_query_string):
-        """Test that exceptions are caught and returned as errors."""
+        """Test that exceptions are bubbled up."""
         with patch(
             "open_targets_platform_mcp.tools.query.query.execute_graphql_query",
             new_callable=AsyncMock,
         ) as mock_execute:
             mock_execute.side_effect = Exception("Unexpected error")
 
-            result = await query_fn(sample_query_string)
-
-        assert result.status == QueryResultStatus.ERROR
-        assert "Unexpected error" in str(result.message)
+            with pytest.raises(Exception, match="Unexpected error"):
+                await query_fn(sample_query_string)
 
     @pytest.mark.asyncio
     async def test_query_with_all_parameters(self, sample_query_string, sample_variables):
@@ -210,11 +208,14 @@ class TestQueryIntegration:
 
             assert result.status == QueryResultStatus.SUCCESS
             assert result.result is not None
-            assert isinstance(result.result, dict)
-            assert "id" in result.result
-            assert "symbol" in result.result
-            assert result.result["id"] == "ENSG00000141510"
-            assert result.result["symbol"] == "TP53"
+            # jq filter returns a list when processing the result
+            assert isinstance(result.result, list)
+            assert len(result.result) == 1
+            assert isinstance(result.result[0], dict)
+            assert "id" in result.result[0]
+            assert "symbol" in result.result[0]
+            assert result.result[0]["id"] == "ENSG00000141510"
+            assert result.result[0]["symbol"] == "TP53"
         finally:
             # Restore original value
             settings.jq_enabled = original_jq_enabled

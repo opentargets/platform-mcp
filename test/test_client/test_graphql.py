@@ -1,11 +1,11 @@
 """Tests for GraphQL client module."""
 
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 
 import pytest
 
 from open_targets_platform_mcp.client.graphql import execute_graphql_query
-from open_targets_platform_mcp.model.result import QueryResult, QueryResultStatus
+from open_targets_platform_mcp.model.result import QueryResultStatus
 
 # ============================================================================
 # execute_graphql_query Tests - Unit Tests with Mocks
@@ -18,37 +18,44 @@ class TestExecuteGraphQLQuery:
     @pytest.mark.asyncio
     async def test_execute_query_success(self, sample_query_string, sample_graphql_response):
         """Test successful query execution."""
-        mock_client = MagicMock()
-        mock_client.execute_async = AsyncMock(return_value=sample_graphql_response)
+        mock_client_instance = AsyncMock()
+        mock_client_instance.execute_async = AsyncMock(return_value=sample_graphql_response)
 
         with patch("open_targets_platform_mcp.client.graphql.gql", return_value="parsed_query"):
-            with patch("open_targets_platform_mcp.client.graphql.Client", return_value=mock_client):
+            with patch("open_targets_platform_mcp.client.graphql.Client", return_value=mock_client_instance):
                 result = await execute_graphql_query(sample_query_string)
 
         assert result.status == QueryResultStatus.SUCCESS
         assert result.result == sample_graphql_response
+        mock_client_instance.execute_async.assert_awaited_once()
 
     @pytest.mark.asyncio
     async def test_execute_query_with_variables(
-        self, sample_query_string, sample_variables, sample_graphql_response
+        self,
+        sample_query_string,
+        sample_variables,
+        sample_graphql_response,
     ):
         """Test query execution with variables."""
-        mock_client = MagicMock()
-        mock_client.execute_async = AsyncMock(return_value=sample_graphql_response)
+        mock_client_instance = AsyncMock()
+        mock_client_instance.execute_async = AsyncMock(return_value=sample_graphql_response)
 
         with patch("open_targets_platform_mcp.client.graphql.gql", return_value="parsed_query"):
-            with patch("open_targets_platform_mcp.client.graphql.Client", return_value=mock_client):
+            with patch("open_targets_platform_mcp.client.graphql.Client", return_value=mock_client_instance):
                 result = await execute_graphql_query(sample_query_string, variables=sample_variables)
 
         assert result.status == QueryResultStatus.SUCCESS
-        mock_client.execute_async.assert_called_once_with("parsed_query", variable_values=sample_variables)
+        mock_client_instance.execute_async.assert_awaited_once_with("parsed_query", variable_values=sample_variables)
 
     @pytest.mark.asyncio
     async def test_execute_query_default_headers(self, sample_query_string):
         """Test that default headers are set when none provided."""
+        mock_client_instance = AsyncMock()
+        mock_client_instance.execute_async = AsyncMock(return_value={})
+
         with patch("open_targets_platform_mcp.client.graphql.AIOHTTPTransport") as mock_transport:
             with patch("open_targets_platform_mcp.client.graphql.gql", return_value="parsed_query"):
-                with patch("open_targets_platform_mcp.client.graphql.Client"):
+                with patch("open_targets_platform_mcp.client.graphql.Client", return_value=mock_client_instance):
                     await execute_graphql_query(sample_query_string)
 
         call_kwargs = mock_transport.call_args[1]
@@ -56,27 +63,25 @@ class TestExecuteGraphQLQuery:
 
     @pytest.mark.asyncio
     async def test_execute_query_invalid_query_string(self):
-        """Test handling of invalid GraphQL query string."""
+        """Test that invalid GraphQL query string errors bubble up."""
         invalid_query = "this is not valid graphql"
 
         with patch("open_targets_platform_mcp.client.graphql.gql", side_effect=Exception("Parse error")):
-            result = await execute_graphql_query(invalid_query)
-
-        assert result.status == QueryResultStatus.ERROR
-        assert "Parse error" in str(result.message)
+            with pytest.raises(Exception, match="Parse error"):
+                await execute_graphql_query(invalid_query)
 
     @pytest.mark.asyncio
     async def test_execute_query_execution_error(self, sample_query_string):
-        """Test handling of query execution errors."""
-        mock_client = MagicMock()
-        mock_client.execute_async = AsyncMock(side_effect=Exception("Network error"))
+        """Test that query execution errors bubble up."""
+        mock_client_instance = AsyncMock()
+        mock_client_instance.execute_async = AsyncMock(side_effect=Exception("Network error"))
 
         with patch("open_targets_platform_mcp.client.graphql.gql", return_value="parsed_query"):
-            with patch("open_targets_platform_mcp.client.graphql.Client", return_value=mock_client):
-                result = await execute_graphql_query(sample_query_string)
+            with patch("open_targets_platform_mcp.client.graphql.Client", return_value=mock_client_instance):
+                with pytest.raises(Exception, match="Network error"):
+                    await execute_graphql_query(sample_query_string)
 
-        assert result.status == QueryResultStatus.ERROR
-        assert "Network error" in str(result.message)
+        mock_client_instance.execute_async.assert_awaited_once()
 
 
 # ============================================================================
@@ -91,43 +96,49 @@ class TestJQFiltering:
     async def test_execute_query_with_simple_jq_filter(self, sample_query_string):
         """Test query execution with simple jq filter."""
         mock_response = {
-            "target": {"id": "ENSG00000141510", "approvedSymbol": "TP53", "approvedName": "tumor protein p53"}
+            "target": {"id": "ENSG00000141510", "approvedSymbol": "TP53", "approvedName": "tumor protein p53"},
         }
 
-        mock_client = MagicMock()
-        mock_client.execute_async = AsyncMock(return_value=mock_response)
+        mock_client_instance = AsyncMock()
+        mock_client_instance.execute_async = AsyncMock(return_value=mock_response)
 
         with patch("open_targets_platform_mcp.client.graphql.gql", return_value="parsed_query"):
-            with patch("open_targets_platform_mcp.client.graphql.Client", return_value=mock_client):
+            with patch("open_targets_platform_mcp.client.graphql.Client", return_value=mock_client_instance):
                 result = await execute_graphql_query(sample_query_string, jq_filter=".target.id")
 
-        # jq filter should extract just the ID
+        # jq filter returns a list (even for single results)
         assert result.status == QueryResultStatus.SUCCESS
-        assert result.result == "ENSG00000141510"
+        assert isinstance(result.result, list)
+        assert result.result == ["ENSG00000141510"]
+        mock_client_instance.execute_async.assert_awaited_once()
 
     @pytest.mark.asyncio
     async def test_execute_query_with_complex_jq_filter(self, sample_query_string):
         """Test query execution with object-building jq filter."""
         mock_response = {
-            "target": {"id": "ENSG00000141510", "approvedSymbol": "TP53", "approvedName": "tumor protein p53"}
+            "target": {"id": "ENSG00000141510", "approvedSymbol": "TP53", "approvedName": "tumor protein p53"},
         }
 
-        mock_client = MagicMock()
-        mock_client.execute_async = AsyncMock(return_value=mock_response)
+        mock_client_instance = AsyncMock()
+        mock_client_instance.execute_async = AsyncMock(return_value=mock_response)
 
         with patch("open_targets_platform_mcp.client.graphql.gql", return_value="parsed_query"):
-            with patch("open_targets_platform_mcp.client.graphql.Client", return_value=mock_client):
+            with patch("open_targets_platform_mcp.client.graphql.Client", return_value=mock_client_instance):
                 result = await execute_graphql_query(
-                    sample_query_string, jq_filter=".target | {id, symbol: .approvedSymbol}"
+                    sample_query_string,
+                    jq_filter=".target | {id, symbol: .approvedSymbol}",
                 )
 
-        # jq filter returns a single dict
+        # jq filter returns a list (even for single results)
         assert result.status == QueryResultStatus.SUCCESS
-        assert isinstance(result.result, dict)
-        assert "id" in result.result
-        assert "symbol" in result.result
-        assert result.result["id"] == "ENSG00000141510"
-        assert result.result["symbol"] == "TP53"
+        assert isinstance(result.result, list)
+        assert len(result.result) == 1
+        assert isinstance(result.result[0], dict)
+        assert "id" in result.result[0]
+        assert "symbol" in result.result[0]
+        assert result.result[0]["id"] == "ENSG00000141510"
+        assert result.result[0]["symbol"] == "TP53"
+        mock_client_instance.execute_async.assert_awaited_once()
 
     @pytest.mark.asyncio
     async def test_execute_query_with_array_jq_filter(self, sample_query_string):
@@ -136,35 +147,38 @@ class TestJQFiltering:
             "targets": [
                 {"id": "ENSG00000141510", "approvedSymbol": "TP53"},
                 {"id": "ENSG00000012048", "approvedSymbol": "BRCA1"},
-            ]
+            ],
         }
 
-        mock_client = MagicMock()
-        mock_client.execute_async = AsyncMock(return_value=mock_response)
+        mock_client_instance = AsyncMock()
+        mock_client_instance.execute_async = AsyncMock(return_value=mock_response)
 
         with patch("open_targets_platform_mcp.client.graphql.gql", return_value="parsed_query"):
-            with patch("open_targets_platform_mcp.client.graphql.Client", return_value=mock_client):
+            with patch("open_targets_platform_mcp.client.graphql.Client", return_value=mock_client_instance):
                 result = await execute_graphql_query(sample_query_string, jq_filter=".targets[] | .approvedSymbol")
 
         # Multiple results should be in result list
         assert result.status == QueryResultStatus.SUCCESS
         assert isinstance(result.result, list)
         assert result.result == ["TP53", "BRCA1"]
+        mock_client_instance.execute_async.assert_awaited_once()
 
     @pytest.mark.asyncio
     async def test_execute_query_jq_filter_error_handling(self, sample_query_string):
-        """Test that jq filter errors are handled gracefully."""
+        """Test that jq filter runtime errors are handled gracefully."""
         mock_response = {"target": {"id": "ENSG00000141510"}}
 
-        mock_client = MagicMock()
-        mock_client.execute_async = AsyncMock(return_value=mock_response)
+        mock_client_instance = AsyncMock()
+        mock_client_instance.execute_async = AsyncMock(return_value=mock_response)
 
-        # Mock jq to raise an error
+        # Mock jq filter to raise an error during execution (not compilation)
         with patch("open_targets_platform_mcp.client.graphql.gql", return_value="parsed_query"):
-            with patch("open_targets_platform_mcp.client.graphql.Client", return_value=mock_client):
-                with patch("open_targets_platform_mcp.client.graphql.jq.compile") as mock_jq:
-                    # Make jq filter raise an error
-                    mock_jq.side_effect = Exception("jq compilation error")
+            with patch("open_targets_platform_mcp.client.graphql.Client", return_value=mock_client_instance):
+                with patch("open_targets_platform_mcp.client.graphql.jq.compile") as mock_jq_compile:
+                    # Create a mock compiled filter that raises an error when used
+                    mock_compiled_filter = AsyncMock()
+                    mock_compiled_filter.input_value.return_value.all.side_effect = Exception("jq execution error")
+                    mock_jq_compile.return_value = mock_compiled_filter
 
                     result = await execute_graphql_query(sample_query_string, jq_filter=".invalid_filter")
 
@@ -173,19 +187,31 @@ class TestJQFiltering:
         assert result.result == mock_response
         assert "jq filter failed" in str(result.message)
         assert "// empty" in str(result.message)  # Should suggest null handling
+        mock_client_instance.execute_async.assert_awaited_once()
+
+    @pytest.mark.asyncio
+    async def test_execute_query_jq_compilation_error(self, sample_query_string):
+        """Test that jq compilation errors bubble up."""
+        # Mock jq.compile to raise an error during compilation
+        with patch("open_targets_platform_mcp.client.graphql.jq.compile") as mock_jq:
+            mock_jq.side_effect = Exception("jq compilation error")
+
+            with pytest.raises(Exception, match="jq compilation error"):
+                await execute_graphql_query(sample_query_string, jq_filter=".invalid_filter")
 
     @pytest.mark.asyncio
     async def test_execute_query_no_jq_filter(self, sample_query_string, sample_graphql_response):
         """Test query execution without jq filter returns full response."""
-        mock_client = MagicMock()
-        mock_client.execute_async = AsyncMock(return_value=sample_graphql_response)
+        mock_client_instance = AsyncMock()
+        mock_client_instance.execute_async = AsyncMock(return_value=sample_graphql_response)
 
         with patch("open_targets_platform_mcp.client.graphql.gql", return_value="parsed_query"):
-            with patch("open_targets_platform_mcp.client.graphql.Client", return_value=mock_client):
+            with patch("open_targets_platform_mcp.client.graphql.Client", return_value=mock_client_instance):
                 result = await execute_graphql_query(sample_query_string)
 
         assert result.status == QueryResultStatus.SUCCESS
         assert result.result == sample_graphql_response
+        mock_client_instance.execute_async.assert_awaited_once()
 
 
 # ============================================================================
@@ -251,11 +277,15 @@ class TestGraphQLIntegration:
         result = await execute_graphql_query(query, jq_filter=".target.approvedSymbol")
 
         assert result.status == QueryResultStatus.SUCCESS
-        assert result.result == "TP53"
+        # jq filter returns a list (even for single results)
+        assert isinstance(result.result, list)
+        assert result.result == ["TP53"]
 
     @pytest.mark.asyncio
     async def test_real_invalid_query(self):
-        """Test that invalid query returns error."""
+        """Test that invalid query raises exception."""
+        from gql.transport.exceptions import TransportQueryError
+
         invalid_query = """
         query {
             nonexistentField {
@@ -264,6 +294,5 @@ class TestGraphQLIntegration:
         }
         """
 
-        result = await execute_graphql_query(invalid_query)
-
-        assert result.status == QueryResultStatus.ERROR
+        with pytest.raises(TransportQueryError):
+            await execute_graphql_query(invalid_query)
