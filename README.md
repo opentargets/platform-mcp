@@ -1,8 +1,5 @@
-# OpenTargets MCP
+# Open Targets Platform MCP
 
-[![Release](https://img.shields.io/github/v/release/opentargets/open-targets-platform-mcp)](https://github.com/opentargets/open-targets-platform-mcp/releases)
-[![Build status](https://img.shields.io/github/actions/workflow/status/opentargets/open-targets-platform-mcp/main.yml?branch=main)](https://github.com/opentargets/open-targets-platform-mcp/actions/workflows/main.yml?query=branch%3Amain)
-[![codecov](https://codecov.io/gh/opentargets/open-targets-platform-mcp/branch/main/graph/badge.svg)](https://codecov.io/gh/opentargets/open-targets-platform-mcp)
 [![Commit activity](https://img.shields.io/github/commit-activity/m/opentargets/open-targets-platform-mcp)](https://github.com/opentargets/open-targets-platform-mcp/commits)
 [![License](https://img.shields.io/github/license/opentargets/open-targets-platform-mcp)](https://github.com/opentargets/open-targets-platform-mcp/blob/main/LICENSE)
 
@@ -10,15 +7,17 @@
 
 **Model Context Protocol (MCP) server for the [OpenTargets Platform API](https://platform.opentargets.org/)**
 
-This package provides an MCP server that enables AI assistants like Claude to interact with the OpenTargets Platform, a comprehensive resource for target-disease associations and drug discovery data.
+This package provides an MCP server that enables AI assistants like Claude to interact with the Open Targets Platform API, a comprehensive resource for target-disease associations and drug discovery data.
 
 ## Quick Navigation
 
 - [Features](#features)
+- [Official MCP Server](#official-mcp-server)
+- [Local Deployment](#local-deployment)
+- [Advanced Deployment](#advanced-deployment)
 - [Available Tools](#available-tools)
 - [Strategy](#strategy)
 - [Usage](#usage)
-- [Local Installation](#local-installation)
 - [JQ Filtering](#jq-filtering-optional)
 - [Development](#development)
 - [Contributing](#contributing)
@@ -30,9 +29,122 @@ This package provides an MCP server that enables AI assistants like Claude to in
 - 📊 **Query Execution**: Execute custom GraphQL queries against the OpenTargets API
 - ⚡ **Batch Query Processing**: Execute the same query multiple times with different parameters efficiently
 - 🔎 **Entity Search**: Search for entities across multiple types (targets, diseases, drugs, variants, studies)
-- 🚀 **Multiple Transports**: Support for both stdio (Claude Desktop) and HTTP transports
 - 🛠️ **CLI Tools**: Easy-to-use command-line interface for server management
-- 🎯 **JQ Filtering** (Optional): Server-side JSON filtering to reduce token consumption and improve performance
+- 🎯 **JQ Filtering** (Optional): Server-side JSON filtering using [jq](https://jqlang.org/) to reduce token consumption and improve performance
+
+## Official MCP Server
+
+The easiest way to use OpenTargets MCP is through the hosted service provided by Open Targets infrastructure.
+
+> **Note**: The official hosted endpoint is currently planned and will be announced when deployed. The service will use [Streamable HTTP transport](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports#streamable-http).
+
+Once available, you can configure Claude Desktop to use the hosted service:
+
+**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`  
+**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+
+```json
+{
+  "mcpServers": {
+    "open-targets-platform-mcp": {
+      "type": "url",
+      "url": "https://mcp.platform.opentargets.org/mcp"
+    }
+  }
+}
+```
+
+## Local Deployment
+
+### Via uvx (Quick Start)
+
+The fastest way to get started is using `uvx`, which will automatically download and run the package directly from GitHub.
+
+The package provides two command variants:
+- `otp-mcp` - Shorter alias (recommended)
+- `open-targets-platform-mcp` - Full command name
+
+Both commands are functionally identical. Examples:
+
+```bash
+# Start stdio server
+uvx --from git+https://github.com/opentargets/open-targets-platform-mcp@dev-refactoring otp-mcp --transport stdio
+
+# With jq filtering enabled
+uvx --from git+https://github.com/opentargets/open-targets-platform-mcp@dev-refactoring otp-mcp --transport stdio --jq
+
+# Start HTTP server
+uvx --from git+https://github.com/opentargets/open-targets-platform-mcp@dev-refactoring otp-mcp --transport http --host 127.0.0.1 --port 8000
+```
+
+### Docker Deployment
+
+You can run the MCP server using the official Docker image:
+
+```bash
+# Pull the latest image
+docker pull ghcr.io/opentargets/platform-mcp:build-pipeline
+
+# Run with stdio transport (for Claude Desktop)
+docker run -it --rm \
+  -e OTP_MCP_TRANSPORT=stdio \
+  -e OTP_MCP_JQ_ENABLED=false \
+  ghcr.io/opentargets/platform-mcp:build-pipeline
+
+# Run with HTTP transport
+docker run -it --rm \
+  -p 8000:8000 \
+  -e OTP_MCP_TRANSPORT=http \
+  -e OTP_MCP_HTTP_HOST=0.0.0.0 \
+  -e OTP_MCP_HTTP_PORT=8000 \
+  -e OTP_MCP_JQ_ENABLED=true \
+  ghcr.io/opentargets/platform-mcp:build-pipeline
+```
+
+For available environment variables, see the [Environment Variables](#environment-variables) table.
+
+## Advanced Deployment
+
+Both advanced deployment options require cloning the repository first:
+
+```bash
+# Clone the repository
+git clone https://github.com/opentargets/open-targets-platform-mcp.git
+cd open-targets-platform-mcp
+
+# Install dependencies
+uv sync
+```
+
+### FastMCP CLI
+
+For advanced usage and to exploit all FastMCP options, you can use the FastMCP CLI directly with the server module:
+
+```bash
+# Install fastmcp (clone the FastMCP repository)
+git clone https://github.com/jlowin/fastmcp.git
+cd fastmcp
+pip install -e .
+
+# Run using FastMCP CLI
+cd ../open-targets-platform-mcp
+fastmcp run ./src/open_targets_platform_mcp/server.py --transport http
+```
+
+> **Note**: For all FastMCP CLI options, see the [FastMCP documentation](https://gofastmcp.com/patterns/cli#fastmcp-run).  
+> **Configuration**: Use environment variables (see [Environment Variables](#environment-variables) table) to configure the server when using FastMCP CLI.
+
+### Development Installation (Editable)
+
+For development or to modify the codebase:
+
+```bash
+# Install the package in editable mode
+uv pip install -e .
+
+# Run the server
+otp-mcp --transport stdio
+```
 
 ## Available Tools
 
@@ -73,16 +185,16 @@ Tool selection:
 
 ## Usage
 
-### Hosted Service (Recommended)
+### Claude Desktop Configuration
 
-The easiest way to use OpenTargets MCP is through the hosted service provided by Open Targets infrastructure.
+To use the MCP server with Claude Desktop, you need to configure it in your Claude Desktop config file:
 
-#### Claude Desktop Configuration
-
-Add this configuration to your Claude Desktop config file:
-
-**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`  
 **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+
+#### Using Remote Hosted Service
+
+Once the official hosted service is available (see [Remote MCP Server](#remote-mcp-server) section), use this configuration:
 
 ```json
 {
@@ -95,26 +207,22 @@ Add this configuration to your Claude Desktop config file:
 }
 ```
 
-> **Note**: The hosted service uses [Streamable HTTP transport](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports#streamable-http). The URL above is a placeholder - the actual endpoint will be announced when the service is deployed on Open Targets infrastructure.
+#### Using Local Installation
 
-### Local Installation
+For local deployment, see the [Local Deployment](#local-deployment) section. Here's the Claude Desktop configuration for a local installation:
 
-For development, testing, or running your own instance, you can install and run the MCP server locally.
-
-#### Prerequisites
-
+**Prerequisites:**
 - Python 3.11+
 - [uv](https://github.com/astral-sh/uv) package manager
 
-#### Installation
-
+**Installation:**
 ```bash
 git clone https://github.com/opentargets/open-targets-platform-mcp.git
 cd open-targets-platform-mcp
 uv sync
 ```
 
-#### Claude Desktop Configuration (Local)
+**Claude Desktop Configuration:**
 
 ```json
 {
@@ -125,7 +233,7 @@ uv sync
         "run",
         "--directory",
         "<your-path>/open-targets-platform-mcp",
-        "open-targets-platform-mcp",
+        "otp-mcp",
         "--transport",
         "stdio"
       ]
@@ -145,7 +253,7 @@ To enable jq filtering support (see [JQ Filtering](#jq-filtering-optional) secti
         "run",
         "--directory",
         "<your-path>/open-targets-platform-mcp",
-        "open-targets-platform-mcp",
+        "otp-mcp",
         "--transport",
         "stdio",
         "--jq"
@@ -159,23 +267,20 @@ To enable jq filtering support (see [JQ Filtering](#jq-filtering-optional) secti
 
 ```bash
 # Start HTTP server (for testing/development)
-uv run open-targets-platform-mcp --transport http
-uv run open-targets-platform-mcp --transport http --host 127.0.0.1 --port 8000
-uv run open-targets-platform-mcp --transport http --jq  # with jq filtering
+uv run otp-mcp --transport http
+uv run otp-mcp --transport http --host 127.0.0.1 --port 8000
+uv run otp-mcp --transport http --jq  # with jq filtering
 
 # Start stdio server
-uv run open-targets-platform-mcp --transport stdio
-uv run open-targets-platform-mcp --transport stdio --jq  # with jq filtering
+uv run otp-mcp --transport stdio
+uv run otp-mcp --transport stdio --jq  # with jq filtering
 
 # List available tools
-uv run open-targets-platform-mcp --list-tools
-uv run open-targets-platform-mcp --list-tools --jq  # show tools with jq support
-
-# Alternative: use shorter command alias
-uv run otp-mcp --transport stdio
+uv run otp-mcp --list-tools
+uv run otp-mcp --list-tools --jq  # show tools with jq support
 ```
 
-#### Environment Variables
+#### Environment Variables {#environment-variables}
 
 Configure the server using environment variables (all prefixed with `OTP_MCP_`). The following table shows all available configuration options:
 
@@ -195,12 +300,12 @@ Using environment variables:
 ```bash
 export OTP_MCP_TRANSPORT=stdio
 export OTP_MCP_JQ_ENABLED=false
-open-targets-platform-mcp
+otp-mcp
 ```
 
 Using CLI options:
 ```bash
-open-targets-platform-mcp --transport stdio --no-jq
+otp-mcp --transport stdio --no-jq
 ```
 
 **Note:** CLI options take precedence over environment variables when both are provided.
@@ -225,14 +330,14 @@ Disable jq filtering when:
 
 **Via CLI flag:**
 ```bash
-open-targets-platform-mcp --transport stdio --jq
-open-targets-platform-mcp --transport http --jq
+otp-mcp --transport stdio --jq
+otp-mcp --transport http --jq
 ```
 
 **Via environment variable:**
 ```bash
 export OTP_MCP_JQ_ENABLED=true  # Enable jq (it's disabled by default)
-open-targets-platform-mcp --transport stdio
+otp-mcp --transport stdio
 ```
 
 #### How JQ Filtering Works
