@@ -35,12 +35,7 @@ def create_server() -> FastMCP:
 
     mcp.add_middleware(ErrorHandlingMiddleware())
 
-    mcp.tool(
-        get_open_targets_graphql_schema,
-        description=resources.files("open_targets_platform_mcp.tools.schema")
-        .joinpath("schema.txt")
-        .read_text(encoding="utf-8"),
-    )
+    mcp.tool(get_open_targets_graphql_schema)
     mcp.tool(
         search_entities,
         description=resources.files("open_targets_platform_mcp.tools.search_entities")
