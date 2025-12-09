@@ -109,16 +109,21 @@ def root(
 
     mcp = create_server()
 
-    if settings.transport == TransportType.HTTP:
-        mcp.run(
-            transport=settings.transport.value,
-            host=settings.http_host,
-            port=settings.http_port,
-        )
-    else:
-        mcp.run(
-            transport=settings.transport.value,
-        )
+    try:
+        if settings.transport == TransportType.HTTP:
+            mcp.run(
+                transport=settings.transport.value,
+                host=settings.http_host,
+                port=settings.http_port,
+            )
+        else:
+            mcp.run(
+                transport=settings.transport.value,
+            )
+    except KeyboardInterrupt:
+        pass
+    except asyncio.CancelledError:
+        pass
 
 
 def main() -> None:
