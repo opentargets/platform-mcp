@@ -18,7 +18,9 @@ This package is the official Open Targets Platform MCP server implementation tha
 - [Available Tools](#available-tools)
 - [Strategy](#strategy)
 - [jq Filtering](#jq-filtering-optional)
+- [Claude Desktop Setup](#claude-desktop-setup)
 - [Project Structure](#project-structure)
+- [Testing](#testing)
 - [Contributing](#contributing)
 - [License](#license)
 
