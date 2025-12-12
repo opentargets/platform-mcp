@@ -1,4 +1,4 @@
-"""OpenTargets MCP - Model Context Protocol server for OpenTargets Platform API."""
+"""Open Targets Platform MCP - Model Context Protocol server for Open Targets Platform API."""
 
 from importlib.metadata import version
 

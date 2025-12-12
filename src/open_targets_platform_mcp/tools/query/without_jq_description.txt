@@ -1,4 +1,4 @@
-Execute GraphQL queries against the Open Targets API.
+Execute GraphQL queries against the Open Targets Platform API.
 
 WORKFLOW - Follow these steps in order:
 

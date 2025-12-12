@@ -1,4 +1,4 @@
-"""Server setup and configuration for OpenTargets MCP."""
+"""Server setup and configuration for Open Targets Platform MCP."""
 
 import base64
 from importlib import resources

@@ -1,4 +1,4 @@
-"""Tool for fetching the OpenTargets GraphQL schema."""
+"""Tool for fetching the Open Targets Platform GraphQL schema."""
 
 import asyncio
 import time

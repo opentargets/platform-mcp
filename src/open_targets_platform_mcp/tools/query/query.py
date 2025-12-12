@@ -1,4 +1,4 @@
-"""Tool for executing GraphQL queries against the OpenTargets API."""
+"""Tool for executing GraphQL queries against the Open Targets Platform API."""
 
 from typing import Annotated, Any
 

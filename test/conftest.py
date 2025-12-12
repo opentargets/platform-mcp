@@ -22,7 +22,7 @@ def pytest_configure(config):
 
 @pytest.fixture
 def mock_api_endpoint() -> str:
-    """Mock OpenTargets API endpoint for testing."""
+    """Mock Open Targets Platform API endpoint for testing."""
     return "https://api.platform.opentargets.org/api/v4/graphql"
 
 
@@ -187,7 +187,7 @@ def complex_jq_filter() -> str:
 
 @pytest.fixture
 def clean_env(monkeypatch):
-    """Remove all OpenTargets environment variables."""
+    """Remove all Open Targets Platform environment variables."""
     env_vars = [
         "OTP_MCP_API_ENDPOINT",
         "OTP_MCP_SERVER_NAME",

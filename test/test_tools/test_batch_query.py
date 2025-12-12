@@ -315,7 +315,7 @@ class TestBatchQueryIntegration:
 
     @pytest.mark.asyncio
     async def test_real_batch_query(self):
-        """Test real batch query against OpenTargets API."""
+        """Test real batch query against Open Targets Platform API."""
         query = """
         query GetTarget($ensemblId: String!) {
             target(ensemblId: $ensemblId) {

@@ -1,4 +1,4 @@
-"""Batch query execution tool for Open Targets GraphQL API."""
+"""Batch query execution tool for Open Targets Platform GraphQL API."""
 
 import asyncio
 from typing import Annotated, Any

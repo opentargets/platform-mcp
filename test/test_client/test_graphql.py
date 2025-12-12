@@ -225,7 +225,7 @@ class TestGraphQLIntegration:
 
     @pytest.mark.asyncio
     async def test_real_query_execution(self):
-        """Test real query execution against OpenTargets API."""
+        """Test real query execution against Open Targets Platform API."""
         query = """
         query {
             target(ensemblId: "ENSG00000141510") {
