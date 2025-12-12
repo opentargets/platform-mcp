@@ -73,24 +73,13 @@ You MUST specify one or more categories to retrieve the relevant schema subset.
 Categories group related GraphQL types into coherent subschemas
 (e.g., 'drug-mechanisms', 'genetic-associations', 'target-safety').
 
-The returned schema includes types from the specified categories plus
-their dependencies expanded..
+Returns deduplicated GraphQL types in SDL format with their annotations.
 
 Args:
-    categories: List of category names to filter the schema. At least
-        one category must be specified.
+    categories: List of category names to filter the schema.
 
 Returns:
-    str: the schema text in SDL (Schema Definition Language) format.
-
-Raises:
-    RuntimeError: If schema was not pre-fetched at startup.
-    ValueError: If an invalid category name is provided.
-
-Examples:
-    - get_open_targets_graphql_schema(["drug-mechanisms"]) -> drug types
-    - get_open_targets_graphql_schema(["target-safety", "drug-safety"])
-        -> combined safety-related types
+    str: Merged, deduplicated types in SDL (Schema Definition Language) format.
 
 {get_categories_for_docstring()}
 """

@@ -331,5 +331,6 @@ class TestGetCategoriesForDocstring:
         result = subschema.get_categories_for_docstring()
 
         assert "Available categories:" in result
-        # Should contain at least one category with description
-        assert " - " in result
+        # Should contain category names
+        assert "drug-mechanisms" in result
+        assert "clinical-genetics" in result
