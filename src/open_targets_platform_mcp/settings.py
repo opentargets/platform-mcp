@@ -22,6 +22,10 @@ class Settings(BaseSettings):
     http_host: str = "localhost"
     http_port: int = 8000
     rate_limiting_enabled: bool = False
+    rate_limiting_global_max_requests_per_second: float = 3
+    rate_limiting_global_burst_capacity: int = 100
+    rate_limiting_session_max_requests_per_second: float = 3
+    rate_limiting_session_burst_capacity: int = 6
     jq_enabled: bool = False
 
     def update(self, **kwargs: Any) -> None:
