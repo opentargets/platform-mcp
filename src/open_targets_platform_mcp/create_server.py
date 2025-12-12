@@ -79,7 +79,7 @@ def create_server() -> FastMCP:
             .read_text(encoding="utf-8")
         )
 
-    mcp.tool(query_function, name="query", description=query_description)
-    mcp.tool(batch_query_function, name="batch_query", description=batch_query_description)
+    mcp.tool(query_function, name="query_open_targets_graphql", description=query_description)
+    mcp.tool(batch_query_function, name="batch_query_open_targets_graphql", description=batch_query_description)
 
     return mcp
