@@ -31,7 +31,7 @@ def create_server() -> FastMCP:
     mcp = FastMCP(
         name=settings.server_name,
         icons=[Icon(src=data_uri, mimeType="image/png")],
-        mask_error_details=False,
+        mask_error_details=True,
     )
 
     if settings.rate_limiting_enabled:
