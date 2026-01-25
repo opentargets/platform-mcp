@@ -6,7 +6,7 @@ from importlib import metadata, resources
 from fastmcp import FastMCP
 from mcp.types import Icon
 from starlette.requests import Request
-from starlette.responses import HTMLResponse, PlainTextResponse
+from starlette.responses import HTMLResponse
 
 from open_targets_platform_mcp.middleware import AdaptiveRateLimitingMiddleware
 from open_targets_platform_mcp.settings import settings
@@ -58,10 +58,9 @@ def create_server() -> FastMCP:
         logo_bytes = resources.files("open_targets_platform_mcp.static").joinpath("logo.png").read_bytes()
         logo_data_uri = f"data:image/png;base64,{base64.b64encode(logo_bytes).decode('utf-8')}"
 
-        # Build full URLs for MCP and health endpoints
+        # Build full URL for MCP endpoint
         base_url = str(request.base_url).rstrip("/")
         mcp_url = f"{base_url}/mcp"
-        health_url = f"{base_url}/health"
 
         # Get registered tools dynamically using the async API
         tools = await mcp.get_tools()
@@ -87,13 +86,7 @@ def create_server() -> FastMCP:
         html_content = html_content.replace("{{ version }}", version)
         html_content = html_content.replace("{{ tools }}", tools_html)
         html_content = html_content.replace("{{ mcp_url }}", mcp_url)
-        html_content = html_content.replace("{{ health_url }}", health_url)
         return HTMLResponse(content=html_content)
-
-    @mcp.custom_route("/health", methods=["GET"])
-    async def health_check(_request: Request) -> PlainTextResponse:
-        """Health check endpoint for monitoring."""
-        return PlainTextResponse("OK")
 
     mcp.tool(get_open_targets_graphql_schema, annotations={"readOnlyHint": True})
     mcp.tool(

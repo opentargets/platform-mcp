@@ -169,17 +169,6 @@
             border-bottom-color: #3489ca;
         }
 
-        .status {
-            display: inline-block;
-            padding: 0.3rem 0.75rem;
-            background: #5cb85c;
-            color: white;
-            border-radius: 3px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            margin-left: 0.5rem;
-        }
-
         .tools-table {
             width: 100%;
             border-collapse: collapse;
@@ -316,12 +305,7 @@
                 <p style="margin: 0;"><strong>MCP Endpoint:</strong> <code id="mcp-endpoint">{{ mcp_url }}</code></p>
                 <button class="copy-button" onclick="copyEndpoint()">Copy</button>
             </div>
-            <div class="endpoint-row">
-                <p style="margin: 0;"><strong>Health Check:</strong> <code id="health-endpoint">{{ health_url }}</code></p>
-                <button class="copy-button" onclick="copyHealthEndpoint()">Copy</button>
-            </div>
-            <p style="margin: 0 0 0.75rem 0;"><strong>Version:</strong> {{ version }}</p>
-            <p style="margin: 0;"><strong>Status:</strong> <span class="status">ONLINE</span></p>
+            <p style="margin: 0;"><strong>Version:</strong> {{ version }}</p>
         </div>
 
         <div class="section">
@@ -359,20 +343,6 @@
     <script>
         function copyEndpoint() {
             const endpointText = document.getElementById('mcp-endpoint').textContent;
-            navigator.clipboard.writeText(endpointText).then(() => {
-                const button = event.target;
-                const originalText = button.textContent;
-                button.textContent = 'Copied!';
-                setTimeout(() => {
-                    button.textContent = originalText;
-                }, 2000);
-            }).catch(err => {
-                console.error('Failed to copy:', err);
-            });
-        }
-
-        function copyHealthEndpoint() {
-            const endpointText = document.getElementById('health-endpoint').textContent;
             navigator.clipboard.writeText(endpointText).then(() => {
                 const button = event.target;
                 const originalText = button.textContent;
