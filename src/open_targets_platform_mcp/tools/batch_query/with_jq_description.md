@@ -7,14 +7,14 @@ WORKFLOW - Follow these steps in order:
 
 Step 1: RESOLVE IDENTIFIERS
     If user provides common names (gene symbols, disease names, drug names),
-    use `search_entity` tool FIRST to convert them to standardized IDs:
+    use `search_entities` tool FIRST to convert them to standardized IDs:
 
     - Targets/Genes: "BRCA1", "BRCA2" -> ENSEMBL IDs "ENSG00000012048", "ENSG00000139618"
     - Diseases: "breast cancer" -> EFO/MONDO ID "MONDO_0007254"
     - Drugs: "aspirin", "ibuprofen" -> ChEMBL IDs "CHEMBL1201583", "CHEMBL521"
     - Variants: Use "chr_pos_ref_alt" format or rsIDs
 
-    Example: search_entity(query_string="BRCA1 BRCA2", entity_names=["target"])
+    Example: search_entities(query_strings=["BRCA1", "BRCA2"])
 
 Step 2: LEARN QUERY STRUCTURE
     Call `get_open_targets_graphql_schema` with relevant categories to retrieve
