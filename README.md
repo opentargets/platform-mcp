@@ -146,6 +146,8 @@ Configure the server using environment variables (all prefixed with `OTP_MCP_`).
 | `OTP_MCP_RATE_LIMITING_MAX_REQUESTS_PER_SECOND` | _(env only)_ | Maximum requests per second when rate limiting is enabled | `3` |
 | `OTP_MCP_RATE_LIMITING_BURST_CAPACITY` | _(env only)_ | Maximum burst capacity when rate limiting is enabled | `100` |
 | `OTP_MCP_DETAILED_TIMING_ENABLED` | `--detailed-timing` | Enable logging of detailed timing information for requests | `false` |
+| `OTP_MCP_LOG_FORMAT` | `--log-format` | Log output: `rich` (console), `json` (one [Cloud Logging structured](https://cloud.google.com/run/docs/logging#writing_structured_logs) JSON object per line on stderr, tracebacks included), or `auto` (`json` when `K_SERVICE` is set, i.e. on Cloud Run; `rich` otherwise) | `auto` |
+| `OTP_MCP_HTTP_ACCESS_LOG` | _(env only)_ | Force uvicorn access logs on/off. Unset: on in `rich` mode, off in `json` mode (Cloud Run already logs every request) | _(unset)_ |
 
 **Examples:**
 

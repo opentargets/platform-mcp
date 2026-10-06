@@ -4,6 +4,7 @@ from pydantic import HttpUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from open_targets_platform_mcp import __version__
+from open_targets_platform_mcp.logging_config import LogFormat
 from open_targets_platform_mcp.types import TransportType
 
 
@@ -30,6 +31,10 @@ class Settings(BaseSettings):
     detailed_timing_enabled: bool = False
     jq_enabled: bool = False
     subschema_depth: int | Literal["exhaustive"] = 1
+    # "auto" = "json" on Cloud Run (K_SERVICE is set), "rich" otherwise.
+    log_format: LogFormat = "auto"
+    # None = on in rich mode, off in json mode (Cloud Run logs requests).
+    http_access_log: bool | None = None
 
     def update(self, **kwargs: Any) -> None:
         for k, v in kwargs.items():

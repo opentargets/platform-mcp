@@ -1,5 +1,5 @@
 import asyncio
-from typing import Annotated
+from typing import Annotated, Any
 
 import typer
 from starlette.middleware import Middleware
@@ -7,7 +7,15 @@ from starlette.types import ASGIApp, Receive, Scope, Send
 
 from open_targets_platform_mcp import __dist_name__, __version__
 from open_targets_platform_mcp.create_server import create_server
+from open_targets_platform_mcp.logging_config import ResolvedLogFormat, configure_logging, uvicorn_config
 from open_targets_platform_mcp.settings import TransportType, settings
+
+
+def _uvicorn_run_kwargs(log_format: ResolvedLogFormat) -> dict[str, Any]:
+    """Uvicorn log settings for FastMCP's ``run``; empty if nothing changes."""
+    config = uvicorn_config(log_format, access_log=settings.http_access_log)
+    return {"uvicorn_config": config} if config else {}
+
 
 app = typer.Typer(
     help=f"Model Context Protocol server for Open Targets Platform version {__version__}",
@@ -142,9 +150,24 @@ def root(
             show_default=True,
         ),
     ] = str(settings.subschema_depth),
+    log_format: Annotated[
+        str | None,
+        typer.Option(
+            "--log-format",
+            help="Log output format: 'rich' (console), 'json' (one Cloud Logging JSON object per line), "
+            "or 'auto' (json when running on Cloud Run, i.e. K_SERVICE is set; rich otherwise).",
+            show_default=True,
+        ),
+    ] = settings.log_format,
 ) -> None:
     """Entry point of CLI."""
     settings.update(**locals())
+
+    resolved_log_format = configure_logging(settings.log_format)
+    run_kwargs: dict[str, Any] = {}
+    if resolved_log_format == "json":
+        # The banner is a Rich panel printed to the console, not a log record.
+        run_kwargs["show_banner"] = False
 
     mcp = asyncio.run(create_server())
 
@@ -186,10 +209,13 @@ def root(
                 port=settings.http_port,
                 stateless_http=settings.stateless_http,
                 middleware=[Middleware(MCPMethodOverrideMiddleware)],
+                **run_kwargs,
+                **_uvicorn_run_kwargs(resolved_log_format),
             )
         else:
             mcp.run(
                 transport=settings.transport.value,
+                **run_kwargs,
             )
     except KeyboardInterrupt:
         pass
