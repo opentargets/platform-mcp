@@ -11,9 +11,12 @@ from open_targets_platform_mcp.tools.schema.helper.subschema import (
     build_category_subschema,
 )
 
-schema_cache = AsyncCache[GraphQLSchema]()
-type_graph_cache = AsyncCache[TypeGraph]()
-category_subschemas_cache = AsyncCache[CategorySubschemas]()
+# Caches backing the schema tools are eager: they are warmed at server startup
+# (see warm_schema_caches) so the first tool call on a fresh instance does not
+# block the event loop while the schema is fetched and processed.
+schema_cache = AsyncCache[GraphQLSchema](is_eager=True)
+type_graph_cache = AsyncCache[TypeGraph](is_eager=True)
+category_subschemas_cache = AsyncCache[CategorySubschemas](is_eager=True)
 serialised_schema_cache = AsyncCache[str]()
 
 
@@ -53,3 +56,9 @@ schema_cache.set_factory(fetch_graphql_schema)
 type_graph_cache.set_factory(type_graph_cache_factory)
 serialised_schema_cache.set_factory(serialised_schema_cache_factory)
 category_subschemas_cache.set_factory(category_subschemas_cache_factory)
+
+
+async def warm_schema_caches() -> None:
+    """Populate all eager schema caches."""
+    for cache in (schema_cache, type_graph_cache, category_subschemas_cache, serialised_schema_cache):
+        await cache.warm()
