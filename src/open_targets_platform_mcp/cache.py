@@ -24,6 +24,11 @@ class AsyncCache(Generic[T]):
                 self._value = await self._factory()
             return self._value
 
+    async def warm(self) -> None:
+        """Populate the cache ahead of first use if it is marked as eager."""
+        if self.is_eager:
+            await self.get()
+
     def set(self, value: T) -> None:
         self._value = value
 

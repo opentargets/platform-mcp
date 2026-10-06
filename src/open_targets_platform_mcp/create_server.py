@@ -1,7 +1,9 @@
 """Server setup and configuration for Open Targets Platform MCP."""
 
 import base64
-from collections.abc import Callable
+import logging
+from collections.abc import AsyncIterator, Callable
+from contextlib import asynccontextmanager
 from importlib import metadata, resources
 from typing import Any
 
@@ -14,7 +16,7 @@ from starlette.responses import HTMLResponse, JSONResponse
 from open_targets_platform_mcp import __version__
 from open_targets_platform_mcp.helper import build_description
 from open_targets_platform_mcp.middleware.handshake_exempt_rate_limiting import HandshakeExemptRateLimitingMiddleware
-from open_targets_platform_mcp.settings import settings
+from open_targets_platform_mcp.settings import TransportType, settings
 from open_targets_platform_mcp.tools import (
     batch_query_with_jq,
     batch_query_without_jq,
@@ -24,7 +26,29 @@ from open_targets_platform_mcp.tools import (
     query_without_jq,
     search_entities,
 )
+from open_targets_platform_mcp.tools.schema.caches import warm_schema_caches
 from open_targets_platform_mcp.tools.schema.schema import build_schema_docstring
+
+logger = logging.getLogger(__name__)
+
+
+@asynccontextmanager
+async def lifespan(_: FastMCP) -> AsyncIterator[dict[str, Any]]:
+    """Warm the schema caches before the HTTP server accepts connections.
+
+    Building the caches is partly CPU-bound and runs on the event loop, so
+    doing it lazily on the first tool call stalls every concurrent request on
+    the instance. FastMCP enters this lifespan before uvicorn binds its
+    socket, so a fresh instance only passes its TCP startup probe once the
+    caches are ready. If warming fails (e.g. the Platform API is
+    unreachable), the caches are filled lazily on first use instead.
+    """
+    if settings.transport == TransportType.HTTP:
+        try:
+            await warm_schema_caches()
+        except Exception:  # noqa: BLE001
+            logger.warning("Failed to warm schema caches at startup; they will be built on first use", exc_info=True)
+    yield {}
 
 
 async def create_server() -> FastMCP:
@@ -43,6 +67,7 @@ async def create_server() -> FastMCP:
         version=__version__,
         icons=[Icon(src=data_uri, mimeType="image/png")],
         mask_error_details=True,
+        lifespan=lifespan,
     )
 
     def register_tool(
