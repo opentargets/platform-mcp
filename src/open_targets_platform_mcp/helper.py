@@ -20,10 +20,24 @@ def clone_function_with_removed_parameter(func: Callable[..., Any], param_name: 
         raise ValueError(msg)
     new_sig = sig.replace(parameters=[p for name, p in parameters if name != param_name])
 
-    @functools.wraps(func)
-    def wrapper(*args: Any, **kwargs: Any) -> Any:
-        kwargs.pop(param_name, None)
-        return func(*args, **kwargs)
+    # Keep coroutine functions async: FastMCP 4 runs sync tool functions in a
+    # worker thread, which would add a pointless thread hop per call here.
+    if inspect.iscoroutinefunction(func):
+
+        @functools.wraps(func)
+        async def async_wrapper(*args: object, **kwargs: object) -> object:
+            kwargs.pop(param_name, None)
+            return await func(*args, **kwargs)
+
+        wrapper = async_wrapper
+    else:
+
+        @functools.wraps(func)
+        def sync_wrapper(*args: Any, **kwargs: Any) -> Any:
+            kwargs.pop(param_name, None)
+            return func(*args, **kwargs)
+
+        wrapper = sync_wrapper
 
     wrapper.__signature__ = new_sig  # type: ignore[attr-defined]
     return wrapper
