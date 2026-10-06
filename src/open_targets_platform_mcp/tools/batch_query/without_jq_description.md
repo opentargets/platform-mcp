@@ -11,7 +11,7 @@ Step 1: RESOLVE IDENTIFIERS
 
     - Targets/Genes: "BRCA1", "BRCA2" -> ENSEMBL IDs "ENSG00000012048", "ENSG00000139618"
     - Diseases: "breast cancer" -> EFO/MONDO ID "MONDO_0007254"
-    - Drugs: "aspirin", "ibuprofen" -> ChEMBL IDs "CHEMBL1201583", "CHEMBL521"
+    - Drugs: "aspirin", "ibuprofen" -> ChEMBL IDs "CHEMBL25", "CHEMBL521"
     - Variants: Use "chr_pos_ref_alt" format or rsIDs
 
     Example: search_entity(query_string="BRCA1 BRCA2", entity_names=["target"])

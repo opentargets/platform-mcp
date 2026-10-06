@@ -187,7 +187,7 @@ If deeper or more specific schema exploration is needed, the LLM can fall back t
 
 - **Targets/Genes**: Use ENSEMBL IDs (e.g., `ENSG00000139618` for BRCA2)
 - **Diseases**: Use EFO/MONDO IDs (e.g., `MONDO_0007254` for breast cancer)
-- **Drugs**: Use ChEMBL IDs (e.g., `CHEMBL1201583` for aspirin)
+- **Drugs**: Use ChEMBL IDs (e.g., `CHEMBL25` for aspirin)
 - **Variants**: Use "chr_pos_ref_alt" format or rsIDs
 
 ### Step 2: Resolve Identifiers (if needed)
