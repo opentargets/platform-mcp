@@ -44,6 +44,11 @@ class QueryResult(BaseModel):
     def create_warning(cls, data: Any, message: str, **kwargs: Any) -> "QueryResult":
         return QueryResult(status=QueryResultStatus.WARNING, data=data, message=message, **kwargs)
 
+    def error_message(self) -> str:
+        """Format an error result's message, prefixed with its error type."""
+        error_type = (self.model_extra or {}).get("error_type")
+        return f"{error_type}: {self.message}" if error_type else str(self.message)
+
 
 class BatchQueryResultItem(BaseModel):
     index: int = Field(

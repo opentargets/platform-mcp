@@ -47,15 +47,18 @@ async def _batch_query_impl(
         for idx, variables in enumerate(variables_list)
     ]
     results = await asyncio.gather(*tasks)
-    return BatchQueryResult(
-        results=results,
-        status_counts=BatchQueryStatusCounts(
-            total=len(variables_list),
-            successful=len([result for result in results if result.result.status == QueryResultStatus.SUCCESS]),
-            failed=len([result for result in results if result.result.status == QueryResultStatus.ERROR]),
-            warning=len([result for result in results if result.result.status == QueryResultStatus.WARNING]),
-        ),
+    status_counts = BatchQueryStatusCounts(
+        total=len(variables_list),
+        successful=len([result for result in results if result.result.status == QueryResultStatus.SUCCESS]),
+        failed=len([result for result in results if result.result.status == QueryResultStatus.ERROR]),
+        warning=len([result for result in results if result.result.status == QueryResultStatus.WARNING]),
     )
+    # Partial failures are reported per item; only a batch where every query
+    # failed is a tool error.
+    if results and status_counts.failed == status_counts.total:
+        msg = f"All {status_counts.total} queries in the batch failed. First error: {results[0].result.error_message()}"
+        raise ToolError(msg)
+    return BatchQueryResult(results=results, status_counts=status_counts)
 
 
 async def batch_query_with_jq(
