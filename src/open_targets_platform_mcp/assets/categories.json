@@ -5,6 +5,8 @@
             "Query",
             "Biosample",
             "CanonicalTranscript",
+            "ClinicalIndicationFromDisease",
+            "ClinicalIndicationFromDrug",
             "Disease",
             "DiseaseHPO",
             "DiseaseHPOEvidences",
@@ -17,22 +19,21 @@
             "HPO",
             "Hallmarks",
             "IdAndSource",
-            "Indications",
-            "KeyValue",
-            "KeyValueArray",
+            "KeyValuePair",
             "LabelAndSource",
             "LabelledElement",
             "LabelledUri",
-            "LinkedDiseases",
-            "LinkedTargets",
             "MechanismsOfAction",
             "NameDescription",
             "Pagination",
             "SequenceOntologyTerm",
             "Target",
+            "TargetPrioritisation",
             "Variant",
             "assays",
-            "biomarkers"
+            "biomarkers",
+            "clinicalIndicationsFromDiseaseImp",
+            "clinicalIndicationsFromDrugImp"
         ]
     },
     "literature-evidence": {
@@ -41,6 +42,7 @@
             "Query",
             "Biosample",
             "CanonicalTranscript",
+            "ClinicalIndicationFromDrug",
             "CredibleSet",
             "Disease",
             "Drug",
@@ -50,14 +52,10 @@
             "GenomicLocation",
             "Hallmarks",
             "IdAndSource",
-            "Indications",
-            "KeyValue",
-            "KeyValueArray",
+            "KeyValuePair",
             "LabelAndSource",
             "LabelledElement",
             "LabelledUri",
-            "LinkedDiseases",
-            "LinkedTargets",
             "MechanismsOfAction",
             "NameDescription",
             "Pagination",
@@ -68,10 +66,11 @@
             "StudyTypeEnum",
             "SumStatQC",
             "Target",
-            "Tep",
+            "TargetPrioritisation",
             "Variant",
             "assays",
-            "biomarkers"
+            "biomarkers",
+            "clinicalIndicationsFromDrugImp"
         ]
     },
     "cancer-genomics": {
@@ -82,6 +81,7 @@
             "Biosample",
             "CancerHallmark",
             "CanonicalTranscript",
+            "ClinicalIndicationFromDrug",
             "CredibleSet",
             "Disease",
             "DiseaseCellLine",
@@ -94,14 +94,10 @@
             "HallmarkAttribute",
             "Hallmarks",
             "IdAndSource",
-            "Indications",
-            "KeyValue",
-            "KeyValueArray",
+            "KeyValuePair",
             "LabelAndSource",
             "LabelledElement",
             "LabelledUri",
-            "LinkedDiseases",
-            "LinkedTargets",
             "MechanismsOfAction",
             "NameDescription",
             "Pagination",
@@ -110,10 +106,11 @@
             "StudyTypeEnum",
             "SumStatQC",
             "Target",
-            "Tep",
+            "TargetPrioritisation",
             "Variant",
             "assays",
             "biomarkers",
+            "clinicalIndicationsFromDrugImp",
             "geneticVariation"
         ]
     },
@@ -127,7 +124,8 @@
             "GeneEssentialityScreen",
             "ChemicalProbe",
             "ChemicalProbeUrl",
-            "DiseaseCellLine"
+            "DiseaseCellLine",
+            "ValidationReadouts"
         ]
     },
     "genetic-associations": {
@@ -143,8 +141,6 @@
             "GenomicLocation",
             "Hallmarks",
             "IdAndSource",
-            "KeyValue",
-            "KeyValueArray",
             "LabelAndSource",
             "LdPopulationStructure",
             "Pagination",
@@ -155,7 +151,6 @@
             "StudyTypeEnum",
             "SumStatQC",
             "Target",
-            "Tep",
             "Variant",
             "Colocalisation",
             "Colocalisations",
@@ -165,7 +160,12 @@
             "L2GPredictions",
             "LdSet",
             "Loci",
-            "Locus"
+            "Locus",
+            "AggregationTypeEnum",
+            "AssociationTimeSeries",
+            "AssociationTimeSeriesResults",
+            "KeyValuePair",
+            "TargetPrioritisation"
         ]
     },
     "variant-annotation": {
@@ -177,18 +177,19 @@
             "CredibleSets",
             "Datasource",
             "DbXref",
+            "EnhancerToGene",
+            "EnhancerToGenes",
             "GenomicLocation",
             "Hallmarks",
             "IdAndSource",
-            "KeyValue",
-            "KeyValueArray",
+            "KeyValuePair",
             "LabelAndSource",
             "Pagination",
             "ProteinCodingCoordinate",
             "ProteinCodingCoordinates",
             "SequenceOntologyTerm",
             "Target",
-            "Tep",
+            "TargetPrioritisation",
             "TranscriptConsequence",
             "Variant",
             "VariantAnnotation",
@@ -204,12 +205,11 @@
             "GenomicLocation",
             "Hallmarks",
             "IdAndSource",
-            "KeyValue",
-            "KeyValueArray",
+            "KeyValuePair",
             "LabelAndSource",
             "Pagination",
             "Target",
-            "Tep"
+            "TargetPrioritisation"
         ]
     },
     "drug-indications": {
@@ -217,27 +217,30 @@
         "types": [
             "Query",
             "CanonicalTranscript",
+            "ClinRepDrugListItem",
+            "ClinicalDiseaseListItem",
+            "ClinicalIndicationFromDisease",
+            "ClinicalIndicationFromDrug",
+            "ClinicalReport",
+            "ClinicalReportType",
+            "ClinicalTargetFromTarget",
             "Disease",
             "Drug",
+            "DrugLabelAndSource",
             "GenomicLocation",
             "Hallmarks",
             "IdAndSource",
-            "IndicationReference",
-            "IndicationRow",
-            "Indications",
-            "KeyValue",
-            "KeyValueArray",
-            "KnownDrug",
-            "KnownDrugReference",
-            "KnownDrugs",
+            "KeyValuePair",
             "LabelAndSource",
-            "LinkedDiseases",
-            "LinkedTargets",
             "MechanismsOfAction",
             "Pagination",
             "Target",
-            "Tep",
-            "URL"
+            "TargetPrioritisation",
+            "TrialLiterature",
+            "TrialSponsor",
+            "clinicalIndicationsFromDiseaseImp",
+            "clinicalIndicationsFromDrugImp",
+            "clinicalTargets"
         ]
     },
     "drug-mechanisms": {
@@ -245,23 +248,24 @@
         "types": [
             "Query",
             "CanonicalTranscript",
+            "ClinicalIndicationFromDrug",
+            "ClinicalTargetFromTarget",
             "Drug",
+            "DrugLabelAndSource",
             "DrugReferences",
             "GenomicLocation",
             "Hallmarks",
             "IdAndSource",
-            "Indications",
-            "KeyValue",
-            "KeyValueArray",
+            "KeyValuePair",
             "LabelAndSource",
-            "LinkedDiseases",
-            "LinkedTargets",
             "MechanismOfActionRow",
             "MechanismsOfAction",
             "Pagination",
             "Reference",
             "Target",
-            "Tep"
+            "TargetPrioritisation",
+            "clinicalIndicationsFromDrugImp",
+            "clinicalTargets"
         ]
     },
     "drug-safety": {
@@ -270,15 +274,15 @@
             "Query",
             "AdverseEvent",
             "AdverseEvents",
+            "ClinicalIndicationFromDrug",
             "Drug",
+            "DrugLabelAndSource",
             "DrugWarning",
             "DrugWarningReference",
             "DrugWithIdentifiers",
-            "Indications",
-            "LinkedDiseases",
-            "LinkedTargets",
             "MechanismsOfAction",
-            "Pagination"
+            "Pagination",
+            "clinicalIndicationsFromDrugImp"
         ]
     },
     "pharmacogenomics": {
@@ -286,26 +290,24 @@
         "types": [
             "Query",
             "CanonicalTranscript",
+            "ClinicalIndicationFromDrug",
             "CredibleSets",
             "Drug",
             "DrugWithIdentifiers",
             "GenomicLocation",
             "Hallmarks",
             "IdAndSource",
-            "Indications",
-            "KeyValue",
-            "KeyValueArray",
+            "KeyValuePair",
             "LabelAndSource",
-            "LinkedDiseases",
-            "LinkedTargets",
             "MechanismsOfAction",
             "Pagination",
             "Pharmacogenomics",
             "SequenceOntologyTerm",
             "Target",
-            "Tep",
+            "TargetPrioritisation",
             "Variant",
-            "VariantAnnotation"
+            "VariantAnnotation",
+            "clinicalIndicationsFromDrugImp"
         ]
     },
     "target-safety": {
@@ -316,8 +318,7 @@
             "GenomicLocation",
             "Hallmarks",
             "IdAndSource",
-            "KeyValue",
-            "KeyValueArray",
+            "KeyValuePair",
             "LabelAndSource",
             "Pagination",
             "SafetyBiosample",
@@ -325,7 +326,7 @@
             "SafetyLiability",
             "SafetyStudy",
             "Target",
-            "Tep"
+            "TargetPrioritisation"
         ]
     },
     "target-tractability": {
@@ -336,13 +337,12 @@
             "GenomicLocation",
             "Hallmarks",
             "IdAndSource",
-            "KeyValue",
-            "KeyValueArray",
+            "KeyValuePair",
             "LabelAndSource",
             "Pagination",
             "Target",
             "TargetClass",
-            "Tep",
+            "TargetPrioritisation",
             "Tractability"
         ]
     },
@@ -350,18 +350,19 @@
         "description": "Protein abundances and subcellular localization data.",
         "types": [
             "Query",
+            "BaselineExpression",
+            "BaselineExpressionRow",
             "CanonicalTranscript",
             "GenomicLocation",
             "Hallmarks",
             "IdAndSource",
-            "KeyValue",
-            "KeyValueArray",
+            "KeyValuePair",
             "LabelAndSource",
             "LocationAndSource",
             "Pagination",
-            "ProteinExpression",
             "Target",
-            "Tep"
+            "TargetPrioritisation",
+            "Transcript"
         ]
     },
     "molecular-interactions": {
@@ -375,14 +376,14 @@
             "InteractionEvidence",
             "InteractionEvidencePDM",
             "InteractionResources",
+            "InteractionSourceEnum",
             "InteractionSpecies",
             "Interactions",
-            "KeyValue",
-            "KeyValueArray",
+            "KeyValuePair",
             "LabelAndSource",
             "Pagination",
             "Target",
-            "Tep"
+            "TargetPrioritisation"
         ]
     },
     "comparative-genomics": {
@@ -394,41 +395,36 @@
             "Hallmarks",
             "Homologue",
             "IdAndSource",
-            "KeyValue",
-            "KeyValueArray",
+            "KeyValuePair",
             "LabelAndSource",
             "Pagination",
             "Target",
-            "Tep"
+            "TargetPrioritisation"
         ]
     },
     "functional-genomics": {
         "description": "Gene expression, biological pathways, and systems biology data from Expression Atlas, Reactome, Gene Ontology. Provides context on gene function, regulation, and pathway involvement.",
         "types": [
             "Query",
+            "BaselineExpression",
+            "BaselineExpressionRow",
             "Biosample",
             "CanonicalTranscript",
-            "CellType",
-            "Expression",
+            "EnhancerToGene",
+            "EnhancerToGenes",
             "GeneOntology",
             "GeneOntologyTerm",
             "GenomicLocation",
             "Hallmarks",
             "IdAndSource",
-            "Interval",
-            "Intervals",
-            "KeyValue",
-            "KeyValueArray",
+            "KeyValuePair",
             "LabelAndSource",
             "Pagination",
             "Pathway",
-            "ProteinExpression",
-            "RNAExpression",
             "ReactomePathway",
             "ResourceScore",
             "Target",
-            "Tep",
-            "Tissue"
+            "TargetPrioritisation"
         ]
     },
     "disease-phenotypes": {
@@ -448,12 +444,17 @@
         "description": "Target-disease association evidence and target prioritisation, integrating evidence across multiple data types. Shows the strength of association between genes/targets and diseases and the target prioritisation factors that can be used to prioritise targets for further investigation.",
         "types": [
             "Query",
+            "AggregationTypeEnum",
             "AssociatedDisease",
             "AssociatedDiseases",
             "AssociatedTarget",
             "AssociatedTargets",
+            "AssociationTimeSeries",
+            "AssociationTimeSeriesResults",
             "Biosample",
             "CanonicalTranscript",
+            "ClinicalIndicationFromDisease",
+            "ClinicalIndicationFromDrug",
             "CredibleSet",
             "DatasourceSettings",
             "DatasourceSettingsInput",
@@ -464,14 +465,10 @@
             "GenomicLocation",
             "Hallmarks",
             "IdAndSource",
-            "Indications",
-            "KeyValue",
-            "KeyValueArray",
+            "KeyValuePair",
             "LabelAndSource",
             "LabelledElement",
             "LabelledUri",
-            "LinkedDiseases",
-            "LinkedTargets",
             "MechanismsOfAction",
             "NameDescription",
             "Pagination",
@@ -481,10 +478,12 @@
             "StudyTypeEnum",
             "SumStatQC",
             "Target",
-            "Tep",
+            "TargetPrioritisation",
             "Variant",
             "assays",
-            "biomarkers"
+            "biomarkers",
+            "clinicalIndicationsFromDiseaseImp",
+            "clinicalIndicationsFromDrugImp"
         ]
     },
     "entity-search": {
@@ -506,7 +505,8 @@
             "SearchResultAggEntity",
             "SearchResultAggs",
             "SearchResults",
-            "Similarity"
+            "Similarity",
+            "EntityUnionType"
         ]
     },
     "platform-metadata": {
