@@ -189,3 +189,22 @@ class TestCategoriesIntegrity:
                     missing.append(f"{category}: {type_name}")
 
         assert missing == [], "Types listed in categories.json are absent from the schema:\n" + "\n".join(missing)
+
+    @pytest.mark.asyncio
+    async def test_every_schema_type_is_defined_in_some_category(self, graphql_schema, mock_schema_caches):
+        # A type that is only referenced (never defined) in every category
+        # subschema can't be queried without falling back to
+        # get_type_dependencies, e.g. when a schema release adds new types
+        # that categories.json doesn't seed.
+        from open_targets_platform_mcp.tools.schema.caches import category_subschemas_cache
+
+        subschemas = await category_subschemas_cache.get()
+        defined = set().union(*(s.types for s in subschemas.subschemas.values()))
+        schema_types = {
+            name
+            for name in graphql_schema.type_map
+            if not name.startswith("__") and name not in {"String", "Int", "Float", "Boolean", "ID"}
+        }
+
+        undefined = sorted(schema_types - defined)
+        assert undefined == [], "Schema types not defined in any category subschema:\n" + "\n".join(undefined)
