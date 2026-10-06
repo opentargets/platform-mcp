@@ -10,7 +10,7 @@ from open_targets_platform_mcp.create_server import create_server
 from open_targets_platform_mcp.settings import TransportType, settings
 
 app = typer.Typer(
-    help=f"Model Context Protocol server for Open Targets Platform version {__version__}",
+    help=f"Model Context Protocol server for Open Targets Platform (server version {__version__})",
 )
 
 
