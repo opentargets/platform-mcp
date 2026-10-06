@@ -2,9 +2,11 @@
 
 from typing import Annotated, Any
 
+from fastmcp.exceptions import ToolError
+
 from open_targets_platform_mcp.client import execute_graphql_query
 from open_targets_platform_mcp.helper import clone_function_with_removed_parameter
-from open_targets_platform_mcp.model.query_result import QueryResult
+from open_targets_platform_mcp.model.query_result import QueryResult, QueryResultStatus
 
 
 async def _query_impl(
@@ -12,7 +14,12 @@ async def _query_impl(
     variables: dict[str, Any] | None = None,
     jq_filter: str | None = None,
 ) -> QueryResult:
-    return await execute_graphql_query(query_string, variables, jq_filter=jq_filter)
+    result = await execute_graphql_query(query_string, variables, jq_filter=jq_filter)
+    # Raise so the MCP response is flagged with isError; ToolError messages
+    # are not masked.
+    if result.status == QueryResultStatus.ERROR:
+        raise ToolError(result.error_message())
+    return result
 
 
 async def query_with_jq(
@@ -32,7 +39,8 @@ async def query_with_jq(
     ] = None,
 ) -> Annotated[
     QueryResult,
-    "GraphQL response with data field containing targets, diseases, drugs, variants, studies or error message.",
+    "GraphQL response with data field containing targets, diseases, drugs, variants, studies. "
+    "A failed query is returned as a tool error with the error message.",
 ]:
     return await _query_impl(query_string, variables, jq_filter)
 

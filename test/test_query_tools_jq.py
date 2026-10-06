@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 
 import pytest
+from fastmcp.exceptions import ToolError
 
 # ---------------------------------------------------------------------------
 # Queries used across tests
@@ -78,29 +79,24 @@ class TestQueryWithJq:
         assert "//" in data["message"]
 
     @pytest.mark.asyncio
-    async def test_bad_jq_syntax_returns_error(self, mcp_client_jq):
-        result = await mcp_client_jq.call_tool(
-            "query_open_targets_graphql",
-            {
-                "query_string": _TARGET_QUERY,
-                "variables": {"ensemblId": "ENSG00000139618"},
-                "jq_filter": "!!!invalid jq",
-            },
-        )
-        data = json.loads(result.content[0].text)
-
-        assert data["status"] == "error"
+    async def test_bad_jq_syntax_raises_tool_error(self, mcp_client_jq):
+        with pytest.raises(ToolError, match="JqCompilationError"):
+            await mcp_client_jq.call_tool(
+                "query_open_targets_graphql",
+                {
+                    "query_string": _TARGET_QUERY,
+                    "variables": {"ensemblId": "ENSG00000139618"},
+                    "jq_filter": "!!!invalid jq",
+                },
+            )
 
     @pytest.mark.asyncio
-    async def test_malformed_query_returns_error_result(self, mcp_client_jq):
-        result = await mcp_client_jq.call_tool(
-            "query_open_targets_graphql",
-            {"query_string": "this is not { valid graphql"},
-        )
-        data = json.loads(result.content[0].text)
-
-        assert data["status"] == "error"
-        assert data["message"] is not None
+    async def test_malformed_query_raises_tool_error(self, mcp_client_jq):
+        with pytest.raises(ToolError):
+            await mcp_client_jq.call_tool(
+                "query_open_targets_graphql",
+                {"query_string": "this is not { valid graphql"},
+            )
 
     @pytest.mark.asyncio
     async def test_has_jq_filter_parameter(self, mcp_client_jq):
@@ -174,24 +170,20 @@ class TestBatchQueryWithJq:
         assert "//" in item["result"]["message"]
 
     @pytest.mark.asyncio
-    async def test_malformed_query_marks_all_items_failed(self, mcp_client_jq):
-        result = await mcp_client_jq.call_tool(
-            "batch_query_open_targets_graphql",
-            {
-                "query_string": "this is not { valid graphql",
-                "variables_list": [
-                    {"ensemblId": "ENSG00000139618"},
-                    {"ensemblId": "ENSG00000141510"},
-                ],
-                "key_field": "ensemblId",
-                "jq_filter": ".target.approvedSymbol",
-            },
-        )
-        data = json.loads(result.content[0].text)
-
-        assert data["status_counts"]["total"] == 2
-        assert data["status_counts"]["successful"] == 0
-        assert data["status_counts"]["failed"] == 2
+    async def test_malformed_query_raises_tool_error_when_all_items_fail(self, mcp_client_jq):
+        with pytest.raises(ToolError, match="All 2 queries in the batch failed"):
+            await mcp_client_jq.call_tool(
+                "batch_query_open_targets_graphql",
+                {
+                    "query_string": "this is not { valid graphql",
+                    "variables_list": [
+                        {"ensemblId": "ENSG00000139618"},
+                        {"ensemblId": "ENSG00000141510"},
+                    ],
+                    "key_field": "ensemblId",
+                    "jq_filter": ".target.approvedSymbol",
+                },
+            )
 
     @pytest.mark.asyncio
     async def test_has_jq_filter_parameter(self, mcp_client_jq):
