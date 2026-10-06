@@ -11,12 +11,12 @@
           "name": "Open Targets GraphQL & REST API Beta",
           "apiVersion": {
             "x": "26",
-            "y": "03",
-            "z": "1"
+            "y": "9",
+            "z": "0"
           },
           "dataVersion": {
             "year": "26",
-            "month": "03",
+            "month": "09",
             "iteration": null
           }
         }
@@ -72,11 +72,15 @@
       },
       "response": {
         "search": {
-          "total": 1552,
+          "total": 1280,
           "hits": [
             {
               "id": "ENSG00000012048",
               "entity": "target"
+            },
+            {
+              "id": "MONDO_0003582",
+              "entity": "disease"
             },
             {
               "id": "MONDO_0700268",
@@ -87,24 +91,16 @@
               "entity": "disease"
             },
             {
-              "id": "MONDO_0003582",
-              "entity": "disease"
-            },
-            {
-              "id": "Orphanet_145",
-              "entity": "disease"
-            },
-            {
-              "id": "gtex_tx_liver_enst00000357654",
-              "entity": "study"
-            },
-            {
               "id": "MONDO_0011450",
               "entity": "disease"
             },
             {
-              "id": "gtex_leafcutter_adipose_visceral_17_43104956_43106478_clu_39870_-",
+              "id": "gtex-v10_ge_artery_tibial_ensg00000012048",
               "entity": "study"
+            },
+            {
+              "id": "EFO_0011021",
+              "entity": "disease"
             },
             {
               "id": "fairfax_2014_microarray_monocyte_naive_ilmn_2311089",
@@ -119,11 +115,7 @@
               "entity": "study"
             },
             {
-              "id": "EFO_0011021",
-              "entity": "disease"
-            },
-            {
-              "id": "fairfax_2014_microarray_monocyte_lps24_ilmn_1738027",
+              "id": "OTAR2057_IBDverse_ge_Enterocyte_top_villus_ENSG00000012048",
               "entity": "study"
             },
             {
@@ -131,35 +123,7 @@
               "entity": "study"
             },
             {
-              "id": "hipsci_ge_ipsc_ensg00000012048",
-              "entity": "study"
-            },
-            {
-              "id": "cedar_microarray_transverse_colon_ilmn_2311089",
-              "entity": "study"
-            },
-            {
-              "id": "fairfax_2012_microarray_b-cell_cd19_ilmn_1738027",
-              "entity": "study"
-            },
-            {
-              "id": "cedar_microarray_neutrophil_cd15_ilmn_2311089",
-              "entity": "study"
-            },
-            {
-              "id": "cedar_microarray_neutrophil_cd15_ilmn_1738027",
-              "entity": "study"
-            },
-            {
-              "id": "fairfax_2014_microarray_monocyte_lps2_ilmn_2311089",
-              "entity": "study"
-            },
-            {
-              "id": "gilchrist_2021_microarray_nk-cell_naive_ilmn_2311089",
-              "entity": "study"
-            },
-            {
-              "id": "gilchrist_2021_microarray_nk-cell_naive_ilmn_1738027",
+              "id": "fairfax_2014_microarray_monocyte_lps24_ilmn_1738027",
               "entity": "study"
             },
             {
@@ -167,11 +131,47 @@
               "entity": "disease"
             },
             {
-              "id": "ENSG00000267595",
-              "entity": "target"
+              "id": "OTAR2057_IBDverse_ge_Enterocyte_progenitor_precursor_crypt_OLFM4+_ENSG00000012048",
+              "entity": "study"
+            },
+            {
+              "id": "hipsci_ge_ipsc_ensg00000012048",
+              "entity": "study"
             },
             {
               "id": "OTAR_0000017",
+              "entity": "disease"
+            },
+            {
+              "id": "MONDO_0021350",
+              "entity": "disease"
+            },
+            {
+              "id": "MONDO_0003274",
+              "entity": "disease"
+            },
+            {
+              "id": "MONDO_0005626",
+              "entity": "disease"
+            },
+            {
+              "id": "MONDO_0004993",
+              "entity": "disease"
+            },
+            {
+              "id": "MONDO_0006054",
+              "entity": "disease"
+            },
+            {
+              "id": "MONDO_0005039",
+              "entity": "disease"
+            },
+            {
+              "id": "MONDO_0002149",
+              "entity": "disease"
+            },
+            {
+              "id": "MONDO_0021148",
               "entity": "disease"
             }
           ]
@@ -187,30 +187,18 @@
       },
       "response": {
         "search": {
-          "total": 124,
+          "total": 111,
           "hits": [
             {
               "id": "CHEMBL25",
               "entity": "drug"
             },
             {
-              "id": "HP_0012042",
-              "entity": "disease"
-            },
-            {
-              "id": "ENSG00000073756",
-              "entity": "target"
-            },
-            {
-              "id": "ENSG00000095303",
-              "entity": "target"
-            },
-            {
               "id": "EFO_0005211",
               "entity": "disease"
             },
             {
-              "id": "MONDO_0005178",
+              "id": "MONDO_0024355",
               "entity": "disease"
             },
             {
@@ -218,15 +206,19 @@
               "entity": "disease"
             },
             {
+              "id": "MONDO_0024644",
+              "entity": "disease"
+            },
+            {
               "id": "MP_0001914",
               "entity": "disease"
             },
             {
-              "id": "EFO_1001375",
+              "id": "HP_0003418",
               "entity": "disease"
             },
             {
-              "id": "HP_0003418",
+              "id": "EFO_0000556",
               "entity": "disease"
             },
             {
@@ -238,7 +230,7 @@
               "entity": "disease"
             },
             {
-              "id": "EFO_0007013",
+              "id": "MONDO_1060198",
               "entity": "disease"
             },
             {
@@ -246,11 +238,7 @@
               "entity": "disease"
             },
             {
-              "id": "EFO_0004607",
-              "entity": "disease"
-            },
-            {
-              "id": "HP_0001945",
+              "id": "EFO_0007013",
               "entity": "disease"
             },
             {
@@ -258,35 +246,47 @@
               "entity": "disease"
             },
             {
-              "id": "EFO_1000985",
+              "id": "MONDO_0005412",
               "entity": "disease"
             },
             {
-              "id": "HP_0003419",
+              "id": "HP_0001945",
               "entity": "disease"
             },
             {
-              "id": "EFO_0009454",
+              "id": "MONDO_0005542",
               "entity": "disease"
             },
             {
-              "id": "HP_0003326",
+              "id": "MONDO_0001126",
               "entity": "disease"
             },
             {
-              "id": "EFO_0010072",
+              "id": "MONDO_0005264",
               "entity": "disease"
             },
             {
-              "id": "Orphanet_733",
+              "id": "MONDO_0002268",
               "entity": "disease"
             },
             {
-              "id": "EFO_0005672",
+              "id": "HP_0001742",
+              "entity": "disease"
+            },
+            {
+              "id": "MONDO_0002258",
               "entity": "disease"
             },
             {
               "id": "MONDO_0021108",
+              "entity": "disease"
+            },
+            {
+              "id": "MONDO_0005709",
+              "entity": "disease"
+            },
+            {
+              "id": "HP_0003326",
               "entity": "disease"
             }
           ]
@@ -302,11 +302,15 @@
       },
       "response": {
         "search": {
-          "total": 85,
+          "total": 99,
           "hits": [
             {
               "id": "CHEMBL521",
               "entity": "drug"
+            },
+            {
+              "id": "MONDO_0005393",
+              "entity": "disease"
             },
             {
               "id": "MONDO_0005178",
@@ -317,7 +321,7 @@
               "entity": "disease"
             },
             {
-              "id": "EFO_0021158",
+              "id": "MP_0001914",
               "entity": "disease"
             },
             {
@@ -325,27 +329,23 @@
               "entity": "disease"
             },
             {
-              "id": "EFO_0004616",
+              "id": "EFO_0021158",
               "entity": "disease"
             },
             {
-              "id": "EFO_0000706",
+              "id": "MONDO_0004247",
               "entity": "disease"
             },
             {
-              "id": "HP_0012532",
+              "id": "MP_0001845",
               "entity": "disease"
             },
             {
-              "id": "EFO_0004607",
+              "id": "MONDO_0005306",
               "entity": "disease"
             },
             {
-              "id": "EFO_0002609",
-              "entity": "disease"
-            },
-            {
-              "id": "HP_0001945",
+              "id": "MONDO_0011429",
               "entity": "disease"
             },
             {
@@ -353,19 +353,15 @@
               "entity": "disease"
             },
             {
+              "id": "MONDO_0005412",
+              "entity": "disease"
+            },
+            {
+              "id": "HP_0001945",
+              "entity": "disease"
+            },
+            {
               "id": "HP_0003419",
-              "entity": "disease"
-            },
-            {
-              "id": "HP_0003326",
-              "entity": "disease"
-            },
-            {
-              "id": "EFO_0010072",
-              "entity": "disease"
-            },
-            {
-              "id": "EFO_0009582",
               "entity": "disease"
             },
             {
@@ -377,7 +373,11 @@
               "entity": "disease"
             },
             {
-              "id": "EFO_0007214",
+              "id": "MONDO_0021108",
+              "entity": "disease"
+            },
+            {
+              "id": "MONDO_0005709",
               "entity": "disease"
             },
             {
@@ -385,11 +385,15 @@
               "entity": "disease"
             },
             {
-              "id": "EFO_1000652",
+              "id": "HP_0003326",
               "entity": "disease"
             },
             {
-              "id": "EFO_1001139",
+              "id": "HP_0030833",
+              "entity": "disease"
+            },
+            {
+              "id": "EFO_0010072",
               "entity": "disease"
             },
             {
@@ -397,11 +401,7 @@
               "entity": "disease"
             },
             {
-              "id": "HP_0100607",
-              "entity": "disease"
-            },
-            {
-              "id": "MONDO_0002815",
+              "id": "MONDO_0009971",
               "entity": "disease"
             }
           ]
