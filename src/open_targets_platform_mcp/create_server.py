@@ -40,6 +40,7 @@ async def create_server() -> FastMCP:
 
     mcp = FastMCP(
         name=settings.server_name,
+        instructions=resources.files("open_targets_platform_mcp").joinpath("instructions.md").read_text(encoding="utf-8"),
         version=__version__,
         icons=[Icon(src=data_uri, mimeType="image/png")],
         mask_error_details=True,
