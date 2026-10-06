@@ -25,8 +25,9 @@ def _list_tools_callback(value: bool) -> None:
     """List all available MCP tools."""
     if value:
         mcp = asyncio.run(create_server())
-        tools = asyncio.run(mcp.get_tools())
-        for name, tool in tools.items():
+        tools = asyncio.run(mcp.list_tools(run_middleware=False))
+        for tool in tools:
+            name = tool.name
             # Extract first line of description from the tool's description field
             description = tool.description or "No description available"
             first_line = description.split("\n")[0].strip()

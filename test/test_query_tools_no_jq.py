@@ -67,7 +67,7 @@ class TestQueryWithoutJq:
     @pytest.mark.asyncio
     async def test_has_no_jq_filter_parameter(self, mcp_client_no_jq):
         tools = {t.name: t for t in await mcp_client_no_jq.list_tools()}
-        props = tools["query_open_targets_graphql"].inputSchema.get("properties", {})
+        props = tools["query_open_targets_graphql"].input_schema.get("properties", {})
         assert "jq_filter" not in props
 
     @pytest.mark.asyncio
@@ -118,7 +118,7 @@ class TestQueryWithoutJq:
     @pytest.mark.asyncio
     async def test_input_schema_marks_query_string_required_and_variables_optional(self, mcp_client_no_jq):
         tools = {t.name: t for t in await mcp_client_no_jq.list_tools()}
-        schema = tools["query_open_targets_graphql"].inputSchema
+        schema = tools["query_open_targets_graphql"].input_schema
 
         assert "query_string" in schema.get("required", [])
         assert "variables" not in schema.get("required", [])
@@ -289,5 +289,5 @@ class TestBatchQueryWithoutJq:
     @pytest.mark.asyncio
     async def test_has_no_jq_filter_parameter(self, mcp_client_no_jq):
         tools = {t.name: t for t in await mcp_client_no_jq.list_tools()}
-        props = tools["batch_query_open_targets_graphql"].inputSchema.get("properties", {})
+        props = tools["batch_query_open_targets_graphql"].input_schema.get("properties", {})
         assert "jq_filter" not in props

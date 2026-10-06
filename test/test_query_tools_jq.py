@@ -105,7 +105,7 @@ class TestQueryWithJq:
     @pytest.mark.asyncio
     async def test_has_jq_filter_parameter(self, mcp_client_jq):
         tools = {t.name: t for t in await mcp_client_jq.list_tools()}
-        props = tools["query_open_targets_graphql"].inputSchema.get("properties", {})
+        props = tools["query_open_targets_graphql"].input_schema.get("properties", {})
         assert "jq_filter" in props
 
     @pytest.mark.asyncio
@@ -196,7 +196,7 @@ class TestBatchQueryWithJq:
     @pytest.mark.asyncio
     async def test_has_jq_filter_parameter(self, mcp_client_jq):
         tools = {t.name: t for t in await mcp_client_jq.list_tools()}
-        props = tools["batch_query_open_targets_graphql"].inputSchema.get("properties", {})
+        props = tools["batch_query_open_targets_graphql"].input_schema.get("properties", {})
         assert "jq_filter" in props
 
     @pytest.mark.asyncio

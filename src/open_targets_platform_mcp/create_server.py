@@ -85,9 +85,10 @@ async def create_server() -> FastMCP:
         mcp_url = f"{base_url}/mcp"
 
         # Get registered tools dynamically using the async API
-        tools = await mcp.get_tools()
+        tools = await mcp.list_tools(run_middleware=False)
         tools_html = ""
-        for tool_name, tool_info in tools.items():
+        for tool_info in tools:
+            tool_name = tool_info.name
             description = tool_info.description or "No description available"
             # Extract first sentence for brief description
             brief_desc = description.split(".")[0] + "." if "." in description else description
